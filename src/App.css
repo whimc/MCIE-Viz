@@ -4,7 +4,7 @@
 
 .App-logo {
   animation: App-logo-spin infinite 20s linear;
-  height: 80px;
+  height: 100px;
 }
 
 .App-header {
@@ -25,4 +25,60 @@
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+}
+
+.myButton {
+	background-color:#47a3ff;
+	-moz-border-radius:9px;
+	-webkit-border-radius:9px;
+	border-radius:9px;
+	border:1px solid #337bc4;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Verdana;
+	font-size:18px;
+	padding:10px 20px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #528ecc;
+}
+
+.myButton:hover {
+	background-color:#378de5;
+}
+
+.myButton:active {
+	position:relative;
+	top:1px;
+}
+
+button:focus {
+  outline: 0;
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.analysis {
+  margin-right: 10%;
+  margin-left: 10%;
+}
+
+hr {
+  display: block;
+  height: 1px;
+  border: 0;
+  margin: 2em;
+  padding: 0;
+  background-color: gray;
+}
+
+.chart-container {
+  position: relative fixed;
+  margin-top: 0vh;
+  margin-bottom: 20vh;
+  margin-left: 10vw;
+  margin-right: 10vw;
 }
