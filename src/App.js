@@ -1,8 +1,32 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import ChartJS from 'react-chartjs-wrapper';
 import Chart from './Components/Chart'
+
+const TEST_JSON = {
+  "blocksBroken": 125,
+  "blocksPlaced": 117,
+  "commands": 1,
+  "chatMessages": 0,
+  "blocksTraveled": 3982,
+  "stemFields": {
+    "Agriculture": 169,
+    "City/Urban Planning": 138,
+    "Landscape Architecture": 121,
+    "Forestry": 100,
+    "Architecture": 92,
+    "Biology": 26
+  },
+  "biomeTimes": {
+    "Plains": 1256,
+    "Extreme Hills": 849,
+    "Mutated Forest": 75,
+    "Extreme Hills With Trees": 6,
+    "Taiga Cold Hills": -250
+  }
+}
+
+const GENERAL_LABELS = ["Blocks Traveled/10", "Blocks Placed", "Blocks Broken", "Chat Messages", "Commands"]
 
 class App extends Component {
   
@@ -86,32 +110,54 @@ class App extends Component {
    * Example JSON: https://pastebin.com/raw/WP0zf79h
    */
   generateButtonClick() {
+    // this.disableGenerateButton();
+    // this.loadingAnimation();
+    // fetch("https://1luht6078g.execute-api.us-west-2.amazonaws.com/demo/GetLatestAnalysis")
+    //   .then(response => response.json())
+    //   .then(data => {
+    //     this.setState({
+    //       loading: "Summary:",
+    //       loaded: true,
+    //       analysis_JSON: [JSON.stringify(data)],
+    //       analysis_general: [
+    //         data["blocksTraveled"]/10,
+    //         data["blocksPlaced"],
+    //         data["blocksBroken"],
+    //         data["chatMessages"],
+    //         data["commands"]
+    //       ],
+    //       analysis_STEM_keys: Object.keys(data["stemFields"]),
+    //       analysis_STEM_values: Object.values(data["stemFields"]),
+    //       analysis_biome_keys: Object.keys(data["biomeTimes"]),
+    //       analysis_biome_values: Object.values(data["biomeTimes"]),
+    //     });
+    //     this.hideGenerateButton();
+    //     this.normalAnimation();
+    //     this.showAnalysis();
+    //   }
+    // );
+
     this.disableGenerateButton();
     this.loadingAnimation();
-    fetch("https://1luht6078g.execute-api.us-west-2.amazonaws.com/demo/GetLatestAnalysis")
-      .then(response => response.json())
-      .then(data => {
-        this.setState({
-          loading: "Summary:",
-          loaded: true,
-          analysis_JSON: [JSON.stringify(data)],
-          analysis_general: [
-            data["blocksTraveled"]/10,
-            data["blocksPlaced"],
-            data["blocksBroken"],
-            data["chatMessages"],
-            data["commands"]
-          ],
-          analysis_STEM_keys: Object.keys(data["stemFields"]),
-          analysis_STEM_values: Object.values(data["stemFields"]),
-          analysis_biome_keys: Object.keys(data["biomeTimes"]),
-          analysis_biome_values: Object.values(data["biomeTimes"]),
-        });
-        this.hideGenerateButton();
-        this.normalAnimation();
-        this.showAnalysis();
-      }
-    );
+    this.setState({
+      loading: "Summary:",
+      loaded: true,
+      analysis_JSON: [JSON.stringify(TEST_JSON)],
+      analysis_general: [
+        TEST_JSON["blocksTraveled"]/10,
+        TEST_JSON["blocksPlaced"],
+        TEST_JSON["blocksBroken"],
+        TEST_JSON["chatMessages"],
+        TEST_JSON["commands"]
+      ],
+      analysis_STEM_keys: Object.keys(TEST_JSON["stemFields"]),
+      analysis_STEM_values: Object.values(TEST_JSON["stemFields"]),
+      analysis_biome_keys: Object.keys(TEST_JSON["biomeTimes"]),
+      analysis_biome_values: Object.values(TEST_JSON["biomeTimes"]),
+    });
+    this.hideGenerateButton();
+    this.normalAnimation();
+    this.showAnalysis();
   }
 
   render() {
@@ -128,9 +174,9 @@ class App extends Component {
           </button>
         </h3>
 
-        <div className = "analysis" id="analysis_data">
-          <div>
-            <h3>Summary</h3>
+        <div className="analysis" id="analysis_data">
+          <h3>Summary</h3>
+          <div className="summary">
             <p>Blocks Traveled: {this.state.analysis_general[0]*10}</p>
             <p>Blocks Placed: {this.state.analysis_general[1]}</p>
             <p>Blocks Broken: {this.state.analysis_general[2]}</p>
@@ -141,82 +187,37 @@ class App extends Component {
           <hr/>
 
           <div>
-            <h3>General Action Analysis</h3>
-            <div>
-              <Chart labels={this.state.analysis_STEM_keys} data={this.state.analysis_STEM_values} />
+            <h3>General Action Statistics</h3>
+            <div className="chart-container">
+              <Chart type='Bar' labels={GENERAL_LABELS} data={this.state.analysis_general} />
+              <Chart type='Pie' labels={GENERAL_LABELS} data={this.state.analysis_general} />
+              <Chart type='Doughnut' labels={GENERAL_LABELS} data={this.state.analysis_general} />
+            </div>
+          </div>
+
+          <hr/>
+
+          <div>
+            <h3>Biome Statistics</h3>
+            <div className="chart-container">
+              <Chart type='Bar' labels={this.state.analysis_biome_keys} data={this.state.analysis_biome_values} />
+              <Chart type='Pie' labels={this.state.analysis_biome_keys} data={this.state.analysis_biome_values} />
+              <Chart type='Doughnut' labels={this.state.analysis_biome_keys} data={this.state.analysis_biome_values} />
+            </div>
+          </div>
+
+          <hr/>
+
+          <div>
+            <h3>STEM Field Analysis</h3>
+            <div className="chart-container">
+              <Chart type='Bar' labels={this.state.analysis_STEM_keys} data={this.state.analysis_STEM_values} />
+              <Chart type='Pie' labels={this.state.analysis_STEM_keys} data={this.state.analysis_STEM_values} />
+              <Chart type='Doughnut' labels={this.state.analysis_STEM_keys} data={this.state.analysis_STEM_values} />
             </div>
           </div>
 
         </div>
-      </div>
-    );
-  }
-}
-
-/**
- * BarChart from ChartJS
- */
-class BarChart extends Component {
-  constructor(props) {
-    super(props);
-    
-    const options = {
-      maintainAspectRatio : false,
-    };
-
-    this.state = {
-      chartData: {},
-      chartOptions: options,
-        
-    };
-  }
-
-  /**
-   * Setting data for ChartJS BarChat
-   * @param {*} nextProps Data from HTML 
-   */
-  componentWillReceiveProps(nextProps) {
-    let data = {
-      labels: nextProps.labels,
-      datasets: [{
-        label: "Session",
-        backgroundColor: [
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(255, 206, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
-          'rgba(153, 102, 255, 0.2)',
-          'rgba(255, 159, 64, 0.2)'
-        ],
-        borderColor: [
-          'rgba(255,99,132,1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(255, 159, 64, 1)'
-        ],
-        hoverBackgroundColor: [
-          'rgba(255, 99, 132, 0.5)',
-          'rgba(54, 162, 235, 0.5)',
-          'rgba(255, 206, 86, 0.5)',
-          'rgba(75, 192, 192, 0.5)',
-          'rgba(153, 102, 255, 0.5)',
-          'rgba(255, 159, 64, 0.5)'
-        ],
-        borderWidth: 1,
-        data: nextProps.data
-      }]
-    };
-
-    this.setState({ chartData: data });
-  }
-
-  render() {
-    const {chartData, chartOptions} = this.state;
-    return (
-      <div>
-        <ChartJS type={'bar'} data={chartData} /> 
       </div>
     );
   }

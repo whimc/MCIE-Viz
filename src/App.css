@@ -1,5 +1,8 @@
 .App {
   text-align: center;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family:Verdana;
 }
 
 .App-logo {
@@ -9,7 +12,7 @@
 
 .App-header {
   background-color: #222;
-  height: 150px;
+  height: auto;
   padding: 20px;
   color: white;
 }
@@ -24,7 +27,7 @@
 
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  to { transform: rotate(720deg); }
 }
 
 .myButton {
@@ -38,7 +41,8 @@
 	color:#ffffff;
 	font-family:Verdana;
 	font-size:18px;
-	padding:10px 20px;
+  padding:10px 20px;
+  width: 205px;
 	text-decoration:none;
 	text-shadow:0px 1px 0px #528ecc;
 }
@@ -61,6 +65,23 @@ button:disabled {
     cursor: not-allowed;
 }
 
+h3 {
+  font-size: 20px;
+}
+
+.summary {
+  text-align: left;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 auto;
+  background-color: rgb(250, 250, 250);
+  padding: 5px 60px 5px 60px;
+  -moz-border-radius:9px;
+	-webkit-border-radius:9px;
+	border-radius:9px;
+	border:1px solid #dfdfdf;
+}
+
 .analysis {
   margin-right: 10%;
   margin-left: 10%;
@@ -76,9 +97,20 @@ hr {
 }
 
 .chart-container {
-  position: relative fixed;
-  margin-top: 0vh;
-  margin-bottom: 20vh;
-  margin-left: 10vw;
-  margin-right: 10vw;
+  vertical-align: middle;
+  margin: 0 auto;
+  max-width: 800px;
+}
+
+.chart {
+  vertical-align: middle;
+  margin: 0 auto;
+  margin-bottom: 50px;
+  height: 500px;
+  background-color: rgb(250, 250, 250);
+  padding: 20px;
+  /* -moz-border-radius:9px;
+	-webkit-border-radius:9px; */
+	border-radius:9px;
+	border:1px solid #dfdfdf;
 }
