@@ -110,54 +110,55 @@ class App extends Component {
    * Example JSON: https://pastebin.com/raw/WP0zf79h
    */
   generateButtonClick() {
-    // this.disableGenerateButton();
-    // this.loadingAnimation();
-    // fetch("https://1luht6078g.execute-api.us-west-2.amazonaws.com/demo/GetLatestAnalysis")
-    //   .then(response => response.json())
-    //   .then(data => {
-    //     this.setState({
-    //       loading: "Summary:",
-    //       loaded: true,
-    //       analysis_JSON: [JSON.stringify(data)],
-    //       analysis_general: [
-    //         data["blocksTraveled"]/10,
-    //         data["blocksPlaced"],
-    //         data["blocksBroken"],
-    //         data["chatMessages"],
-    //         data["commands"]
-    //       ],
-    //       analysis_STEM_keys: Object.keys(data["stemFields"]),
-    //       analysis_STEM_values: Object.values(data["stemFields"]),
-    //       analysis_biome_keys: Object.keys(data["biomeTimes"]),
-    //       analysis_biome_values: Object.values(data["biomeTimes"]),
-    //     });
-    //     this.hideGenerateButton();
-    //     this.normalAnimation();
-    //     this.showAnalysis();
-    //   }
-    // );
-
     this.disableGenerateButton();
     this.loadingAnimation();
-    this.setState({
-      loading: "Summary:",
-      loaded: true,
-      analysis_JSON: [JSON.stringify(TEST_JSON)],
-      analysis_general: [
-        TEST_JSON["blocksTraveled"]/10,
-        TEST_JSON["blocksPlaced"],
-        TEST_JSON["blocksBroken"],
-        TEST_JSON["chatMessages"],
-        TEST_JSON["commands"]
-      ],
-      analysis_STEM_keys: Object.keys(TEST_JSON["stemFields"]),
-      analysis_STEM_values: Object.values(TEST_JSON["stemFields"]),
-      analysis_biome_keys: Object.keys(TEST_JSON["biomeTimes"]),
-      analysis_biome_values: Object.values(TEST_JSON["biomeTimes"]),
-    });
-    this.hideGenerateButton();
-    this.normalAnimation();
-    this.showAnalysis();
+    fetch("https://1luht6078g.execute-api.us-west-2.amazonaws.com/demo/GetLatestAnalysis")
+      .then(response => response.json())
+      .then(data => {
+        this.setState({
+          loading: "Summary:",
+          loaded: true,
+          analysis_JSON: [JSON.stringify(data)],
+          analysis_general: [
+            data["blocksTraveled"]/10,
+            data["blocksPlaced"],
+            data["blocksBroken"],
+            data["chatMessages"],
+            data["commands"]
+          ],
+          analysis_STEM_keys: Object.keys(data["stemFields"]),
+          analysis_STEM_values: Object.values(data["stemFields"]),
+          analysis_biome_keys: Object.keys(data["biomeTimes"]),
+          analysis_biome_values: Object.values(data["biomeTimes"]),
+        });
+        this.hideGenerateButton();
+        this.normalAnimation();
+        this.showAnalysis();
+      }
+    );
+
+// FOR TESTING
+    // this.disableGenerateButton();
+    // this.loadingAnimation();
+    // this.setState({
+    //   loading: "Summary:",
+    //   loaded: true,
+    //   analysis_JSON: [JSON.stringify(TEST_JSON)],
+    //   analysis_general: [
+    //     TEST_JSON["blocksTraveled"]/10,
+    //     TEST_JSON["blocksPlaced"],
+    //     TEST_JSON["blocksBroken"],
+    //     TEST_JSON["chatMessages"],
+    //     TEST_JSON["commands"]
+    //   ],
+    //   analysis_STEM_keys: Object.keys(TEST_JSON["stemFields"]),
+    //   analysis_STEM_values: Object.values(TEST_JSON["stemFields"]),
+    //   analysis_biome_keys: Object.keys(TEST_JSON["biomeTimes"]),
+    //   analysis_biome_values: Object.values(TEST_JSON["biomeTimes"]),
+    // });
+    // this.hideGenerateButton();
+    // this.normalAnimation();
+    // this.showAnalysis();
   }
 
   render() {
