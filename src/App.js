@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import ChartJS from 'react-chartjs-wrapper';
+import Chart from './Components/Chart'
 
 class App extends Component {
   
@@ -14,11 +15,11 @@ class App extends Component {
       // Whether or not the analysis has loaded
       loaded: false,
       // JSON returned from analysis
-      anaylsis_JSON: [],
+      analysis_JSON: [],
       // 0: Blocks traveled (/10) | 1: Blocks placed | 2: Blocks broken | 3: Chat messages sent | 4: Commands sent
       analysis_general: [],
       // Keys for STEM areas
-      anaylsis_STEM_keys: [],
+      analysis_STEM_keys: [],
       // Values for STEM areas
       analysis_STEM_values: [],
       // Keys for biomes
@@ -93,7 +94,7 @@ class App extends Component {
         this.setState({
           loading: "Summary:",
           loaded: true,
-          anaylsis_JSON: [JSON.stringify(data)],
+          analysis_JSON: [JSON.stringify(data)],
           analysis_general: [
             data["blocksTraveled"]/10,
             data["blocksPlaced"],
@@ -135,15 +136,14 @@ class App extends Component {
             <p>Blocks Broken: {this.state.analysis_general[2]}</p>
             <p>Messages Sent: {this.state.analysis_general[3]}</p>
             <p>Commands Sent: {this.state.analysis_general[4]}</p>
-            <p>{this.state.anaylsis_JSON}</p>
           </div>
 
           <hr/>
 
           <div>
             <h3>General Action Analysis</h3>
-            <div className="chart-container">
-              <BarChart labels={["Blocks Traveled/10", "Blocks Placed", "Blocks Broken", "Chat Messages", "Commands"]} values={this.state.analysis_general}></BarChart>
+            <div>
+              <Chart labels={this.state.analysis_STEM_keys} data={this.state.analysis_STEM_values} />
             </div>
           </div>
 
@@ -161,12 +161,13 @@ class BarChart extends Component {
     super(props);
     
     const options = {
-      maintainAspectRatio: false,
+      maintainAspectRatio : false,
     };
 
     this.state = {
       chartData: {},
       chartOptions: options,
+        
     };
   }
 
@@ -175,11 +176,10 @@ class BarChart extends Component {
    * @param {*} nextProps Data from HTML 
    */
   componentWillReceiveProps(nextProps) {
-    var data = {
+    let data = {
       labels: nextProps.labels,
       datasets: [{
         label: "Session",
-        data: nextProps.values,
         backgroundColor: [
           'rgba(255, 99, 132, 0.2)',
           'rgba(54, 162, 235, 0.2)',
@@ -188,14 +188,14 @@ class BarChart extends Component {
           'rgba(153, 102, 255, 0.2)',
           'rgba(255, 159, 64, 0.2)'
         ],
-        // borderColor: [
-        //   'rgba(255,99,132,1)',
-        //   'rgba(54, 162, 235, 1)',
-        //   'rgba(255, 206, 86, 1)',
-        //   'rgba(75, 192, 192, 1)',
-        //   'rgba(153, 102, 255, 1)',
-        //   'rgba(255, 159, 64, 1)'
-        // ],
+        borderColor: [
+          'rgba(255,99,132,1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)'
+        ],
         hoverBackgroundColor: [
           'rgba(255, 99, 132, 0.5)',
           'rgba(54, 162, 235, 0.5)',
@@ -204,18 +204,19 @@ class BarChart extends Component {
           'rgba(153, 102, 255, 0.5)',
           'rgba(255, 159, 64, 0.5)'
         ],
-        borderWidth: 1
+        borderWidth: 1,
+        data: nextProps.data
       }]
     };
 
-    this.setState({chartData: data});
+    this.setState({ chartData: data });
   }
 
   render() {
     const {chartData, chartOptions} = this.state;
     return (
       <div>
-        <ChartJS type={"bar"} data={chartData} options={chartOptions} />
+        <ChartJS type={'bar'} data={chartData} /> 
       </div>
     );
   }
