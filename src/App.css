@@ -6,8 +6,12 @@
 }
 
 .App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 100px;
+  -webkit-animation: App-logo-spin-main infinite 1s alternate ease-in-out;
+  -moz-animation: App-logo-spin-main infinite 1s alternate ease-in-out;
+  -o-animation: App-logo-spin-main infinite 1s alternate ease-in-out;
+  animation: App-logo-spin-main infinite 1s alternate ease-in-out;
+  height: 80px;
+  padding: 25px 0px 25px 0px;
 }
 
 .App-header {
@@ -25,9 +29,14 @@
   font-size: large;
 }
 
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(720deg); }
+@keyframes App-logo-spin-main {
+  from { transform: rotate(-5deg) }
+  to { transform: rotate(5deg) }
+}
+
+@keyframes App-logo-spin-loading {
+  from { transform: scale(0.8) rotate(0deg); }
+  to { transform: scale(0.5) rotate(360deg); }
 }
 
 .myButton {

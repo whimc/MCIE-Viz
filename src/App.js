@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import logo from './MCIE.png';
 import './App.css';
 import Chart from './Components/Chart'
 
@@ -97,12 +97,20 @@ class App extends Component {
 
   normalAnimation() {
     var logo = document.getElementById("logo");
-    logo.style.animation = "App-logo-spin infinite 20s linear";
+    var property = "App-logo-spin-main infinite 1s alternate ease-in-out";
+    logo.style['-webkit-animation'] = property;
+    logo.style['-moz-animation'] = property;
+    logo.style['-o-animation'] = property;
+    logo.style['animation'] = property;
   }
 
   loadingAnimation() {
     var logo = document.getElementById("logo");
-    logo.style.animation = "App-logo-spin infinite 2s ease-in-out alternate-reverse";
+    var property = "App-logo-spin-loading infinite 1s alternate ease-in-out";
+    logo.style['-webkit-animation'] = property;
+    logo.style['-moz-animation'] = property;
+    logo.style['-o-animation'] = property;
+    logo.style['animation'] = property;
   }
 
   /**
@@ -166,7 +174,7 @@ class App extends Component {
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" id="logo" alt="logo" />
-          <h1 className="App-title">MCIE: Minecraft Interest Engine</h1>
+          <h1 className="App-title">Minecraft Interest Engine</h1>
         </header>
 
         <h3>
