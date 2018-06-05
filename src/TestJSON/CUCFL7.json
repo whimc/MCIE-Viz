@@ -1,0 +1,19 @@
+{
+  "blocksBroken": 35,
+  "blocksPlaced": 16,
+  "commands": 15,
+  "chatMessages": 0,
+  "blocksTraveled": 147052,
+  "stemAreas": {
+    "GEOL": 51,
+    "MME": 34,
+    "FOR": 28,
+    "AG": 27,
+    "LAND": 25,
+    "ARCH": 17
+  },
+  "biomeTimes": {
+    "Plains": 1671,
+    "Deep Ocean": 240
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "blocksBroken": 19,
+  "blocksPlaced": 1,
+  "commands": 12,
+  "chatMessages": 0,
+  "blocksTraveled": 61223,
+  "stemAreas": {
+    "AG": 45,
+    "LAND": 24,
+    "BIO": 14,
+    "FOR": 11,
+    "CIVE": 2
+  },
+  "biomeTimes": {
+    "Plains": 1668,
+    "Deep Ocean": 45,
+    "Desert": 9
+  }
+}

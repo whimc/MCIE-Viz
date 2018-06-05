@@ -3,28 +3,7 @@ import logo from './MCIE.png';
 import './App.css';
 import Chart from './Components/Chart'
 
-const TEST_JSON = {
-  "blocksBroken": 125,
-  "blocksPlaced": 117,
-  "commands": 1,
-  "chatMessages": 0,
-  "blocksTraveled": 3982,
-  "stemFields": {
-    "Agriculture": 169,
-    "City/Urban Planning": 138,
-    "Landscape Architecture": 121,
-    "Forestry": 100,
-    "Architecture": 92,
-    "Biology": 26
-  },
-  "biomeTimes": {
-    "Plains": 1256,
-    "Extreme Hills": 849,
-    "Mutated Forest": 75,
-    "Extreme Hills With Trees": 6,
-    "Taiga Cold Hills": -250
-  }
-}
+const TEST_JSON = require('./TestJSON/CUCFL.json');
 
 const GENERAL_LABELS = ["Blocks Traveled/10", "Blocks Placed", "Blocks Broken", "Chat Messages", "Commands"]
 
@@ -159,8 +138,8 @@ class App extends Component {
     //     TEST_JSON["chatMessages"],
     //     TEST_JSON["commands"]
     //   ],
-    //   analysis_STEM_keys: Object.keys(TEST_JSON["stemFields"]),
-    //   analysis_STEM_values: Object.values(TEST_JSON["stemFields"]),
+    //   analysis_STEM_keys: Object.keys(TEST_JSON["stemAreas"]),
+    //   analysis_STEM_values: Object.values(TEST_JSON["stemAreas"]),
     //   analysis_biome_keys: Object.keys(TEST_JSON["biomeTimes"]),
     //   analysis_biome_values: Object.values(TEST_JSON["biomeTimes"]),
     // });

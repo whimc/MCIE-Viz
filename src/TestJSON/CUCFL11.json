@@ -1,0 +1,23 @@
+{
+  "blocksBroken": 23,
+  "blocksPlaced": 32,
+  "commands": 12,
+  "chatMessages": 0,
+  "blocksTraveled": 192252,
+  "stemAreas": {
+    "THE": 105,
+    "ECE": 70,
+    "CITY": 35,
+    "AG": 19,
+    "LAND": 10,
+    "BIO": 10
+  },
+  "biomeTimes": {
+    "Plains": 1590,
+    "Ocean": 132,
+    "Desert": 126,
+    "Deep Ocean": 45,
+    "River": 18,
+    "Beaches": 9
+  }
+}
