@@ -4,7 +4,7 @@ import './App.css';
 import Chart from './Components/Chart'
 import TimeChart from './Components/TimeChart'
 
-const TEST_JSON = require('./TestJSON/latest_analysis.json');
+// const TEST_JSON = require('./TestJSON/latest_analysis.json');
 
 const GENERAL_LABELS = ["Blocks Traveled/10", "Blocks Placed", "Blocks Broken", "Chat Messages", "Commands"];
 
