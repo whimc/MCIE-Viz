@@ -1,0 +1,135 @@
+{
+    "username": "CUCFL3",
+    "startTime": 1529097398,
+    "endTime": 1529098994,
+    "blocksBroken": 119,
+    "blocksPlaced": 151,
+    "commands": 2,
+    "chatMessages": 0,
+    "blocksTraveled": 3103,
+    "stemAreas": {
+      "CIVE": 82,
+      "ARCH": 44,
+      "CITY": 18,
+      "FOR": 9,
+      "MECHE": 3,
+      "LAND": 3
+    },
+    "areaTimes": {
+      "CITY": [
+        {
+          "minute": 0,
+          "points": 0
+        },
+        {
+          "minute": 17,
+          "points": 6
+        },
+        {
+          "minute": 18,
+          "points": 12
+        }
+      ],
+      "MECHE": [
+        {
+          "minute": 0,
+          "points": 0
+        },
+        {
+          "minute": 6,
+          "points": 3
+        }
+      ],
+      "FOR": [
+        {
+          "minute": 0,
+          "points": 0
+        },
+        {
+          "minute": 6,
+          "points": 9
+        }
+      ],
+      "LAND": [
+        {
+          "minute": 0,
+          "points": 0
+        },
+        {
+          "minute": 6,
+          "points": 3
+        }
+      ],
+      "ARCH": [
+        {
+          "minute": 0,
+          "points": 0
+        },
+        {
+          "minute": 12,
+          "points": 8
+        },
+        {
+          "minute": 11,
+          "points": 8
+        },
+        {
+          "minute": 10,
+          "points": 12
+        },
+        {
+          "minute": 14,
+          "points": 8
+        },
+        {
+          "minute": 16,
+          "points": 2
+        },
+        {
+          "minute": 17,
+          "points": 6
+        }
+      ],
+      "CIVE": [
+        {
+          "minute": 0,
+          "points": 0
+        },
+        {
+          "minute": 6,
+          "points": 4
+        },
+        {
+          "minute": 12,
+          "points": 12
+        },
+        {
+          "minute": 11,
+          "points": 12
+        },
+        {
+          "minute": 10,
+          "points": 18
+        },
+        {
+          "minute": 14,
+          "points": 12
+        },
+        {
+          "minute": 16,
+          "points": 3
+        },
+        {
+          "minute": 17,
+          "points": 13
+        },
+        {
+          "minute": 18,
+          "points": 8
+        }
+      ]
+    },
+    "biomeTimes": {
+      "Plains": 1590
+    }
+  }

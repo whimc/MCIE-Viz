@@ -2,10 +2,31 @@ import React, { Component } from 'react';
 import logo from './MCIE.png';
 import './App.css';
 import Chart from './Components/Chart'
+import TimeChart from './Components/TimeChart'
 
-const TEST_JSON = require('./TestJSON/CUCFL.json');
+// const TEST_JSON = require('./TestJSON/CUCFL.json');
 
-const GENERAL_LABELS = ["Blocks Traveled/10", "Blocks Placed", "Blocks Broken", "Chat Messages", "Commands"]
+const GENERAL_LABELS = ["Blocks Traveled/10", "Blocks Placed", "Blocks Broken", "Chat Messages", "Commands"];
+
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+function getDate(timestamp) {
+
+  if (timestamp < 0) {
+    return "None";
+  }
+
+  var a = new Date(timestamp * 1000);
+
+  var day = a.getDate();
+  var month = MONTHS[a.getMonth()];
+  var year = a.getFullYear();
+  var hour = a.getHours() % 12;
+  var min = a.getMinutes();
+  var am_pm = (a.getHours() >= 12) ? "PM" : "AM";
+
+  return month + ' ' + day + ' ' + year + ' ' + hour + ':' + min + ' ' + am_pm;
+}
 
 class App extends Component {
   
@@ -13,8 +34,12 @@ class App extends Component {
     super(props);
     
     this.state = {
-      // Loading message
-      loading: "Loading Analysis...",
+      // Username of user being analyzed
+      username: "",
+      // Start time of session being analyzed
+      start_time: 0,
+      // End time of session being analyzed
+      end_time: -1,
       // Whether or not the analysis has loaded
       loaded: false,
       // JSON returned from analysis
@@ -25,12 +50,15 @@ class App extends Component {
       analysis_STEM_keys: [],
       // Values for STEM areas
       analysis_STEM_values: [],
+      // Whole "areaTimes" part of JSON file
+      analysis_STEM_times: {},
       // Keys for biomes
       analysis_biome_keys: [],
       // Values for biomes
       analysis_biome_values: []
     };
 
+    // Binding button click function to button click
     this.generateButtonClick = this.generateButtonClick.bind(this);
   }
 
@@ -74,6 +102,9 @@ class App extends Component {
     button.style.display = "none";
   }
 
+  /**
+   * Makes logo do the normal animation
+   */
   normalAnimation() {
     var logo = document.getElementById("logo");
     var property = "App-logo-spin-main infinite 1s alternate ease-in-out";
@@ -83,6 +114,9 @@ class App extends Component {
     logo.style['animation'] = property;
   }
 
+  /**
+   * Makes logo do the loading animation
+   */
   loadingAnimation() {
     var logo = document.getElementById("logo");
     var property = "App-logo-spin-loading infinite 1s alternate ease-in-out";
@@ -92,6 +126,8 @@ class App extends Component {
     logo.style['animation'] = property;
   }
 
+  
+
   /**
    * Retrieves analysis as a JSON file and displays it
    * Example JSON: https://pastebin.com/raw/WP0zf79h
@@ -99,11 +135,14 @@ class App extends Component {
   generateButtonClick() {
     this.disableGenerateButton();
     this.loadingAnimation();
-    fetch("https://1luht6078g.execute-api.us-west-2.amazonaws.com/demo/GetLatestAnalysis")
+    // fetch("https://1luht6078g.execute-api.us-west-2.amazonaws.com/demo/GetLatestAnalysis")
+      fetch("https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/getlatestanalysis/341")
       .then(response => response.json())
       .then(data => {
         this.setState({
-          loading: "Summary:",
+          username: data["username"],
+          start_time: data["startTime"],
+          end_time: data["endTime"],
           loaded: true,
           analysis_JSON: [JSON.stringify(data)],
           analysis_general: [
@@ -113,8 +152,9 @@ class App extends Component {
             data["chatMessages"],
             data["commands"]
           ],
-          analysis_STEM_keys: Object.keys(data["stemFields"]),
-          analysis_STEM_values: Object.values(data["stemFields"]),
+          analysis_STEM_keys: Object.keys(data["stemAreas"]),
+          analysis_STEM_values: Object.values(data["stemAreas"]),
+          analysis_STEM_times: data["areaTimes"],
           analysis_biome_keys: Object.keys(data["biomeTimes"]),
           analysis_biome_values: Object.values(data["biomeTimes"]),
         });
@@ -123,29 +163,7 @@ class App extends Component {
         this.showAnalysis();
       }
     );
-
-// FOR TESTING
-    // this.disableGenerateButton();
-    // this.loadingAnimation();
-    // this.setState({
-    //   loading: "Summary:",
-    //   loaded: true,
-    //   analysis_JSON: [JSON.stringify(TEST_JSON)],
-    //   analysis_general: [
-    //     TEST_JSON["blocksTraveled"]/10,
-    //     TEST_JSON["blocksPlaced"],
-    //     TEST_JSON["blocksBroken"],
-    //     TEST_JSON["chatMessages"],
-    //     TEST_JSON["commands"]
-    //   ],
-    //   analysis_STEM_keys: Object.keys(TEST_JSON["stemAreas"]),
-    //   analysis_STEM_values: Object.values(TEST_JSON["stemAreas"]),
-    //   analysis_biome_keys: Object.keys(TEST_JSON["biomeTimes"]),
-    //   analysis_biome_values: Object.values(TEST_JSON["biomeTimes"]),
-    // });
-    // this.hideGenerateButton();
-    // this.normalAnimation();
-    // this.showAnalysis();
+    
   }
 
   render() {
@@ -163,13 +181,16 @@ class App extends Component {
         </h3>
 
         <div className="analysis" id="analysis_data">
-          <h3>Summary</h3>
+          <h3>{this.state.username}'s Summary:</h3>
           <div className="summary">
-            <p>Blocks Traveled: {this.state.analysis_general[0]*10}</p>
-            <p>Blocks Placed: {this.state.analysis_general[1]}</p>
-            <p>Blocks Broken: {this.state.analysis_general[2]}</p>
-            <p>Messages Sent: {this.state.analysis_general[3]}</p>
-            <p>Commands Sent: {this.state.analysis_general[4]}</p>
+            <p><b>Start Time:</b> {getDate(this.state.start_time)}</p>
+            <p><b>End Time:</b> {this.state.end_time < 0 ? "Now" : getDate(this.state.end_time)}</p>
+            <p><b>Duration:</b> {(this.state.end_time - this.state.start_time)/60} minutes</p>
+            <p><b>Blocks Traveled:</b> {this.state.analysis_general[0]*10}</p>
+            <p><b>Blocks Placed:</b> {this.state.analysis_general[1]}</p>
+            <p><b>Blocks Broken:</b> {this.state.analysis_general[2]}</p>
+            <p><b>Messages Sent:</b> {this.state.analysis_general[3]}</p>
+            <p><b>Commands Sent:</b> {this.state.analysis_general[4]}</p>
           </div>
 
           <hr/>
@@ -202,6 +223,7 @@ class App extends Component {
               <Chart type='Bar' labels={this.state.analysis_STEM_keys} data={this.state.analysis_STEM_values} />
               <Chart type='Pie' labels={this.state.analysis_STEM_keys} data={this.state.analysis_STEM_values} />
               <Chart type='Doughnut' labels={this.state.analysis_STEM_keys} data={this.state.analysis_STEM_values} />
+              <TimeChart data={this.state.analysis_STEM_times} />
             </div>
           </div>
 
