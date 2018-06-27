@@ -40,6 +40,8 @@ class Chart extends Component {
         type: 'Bar',
         label: 'Session',
         maintainAspectRatio: false,
+        xAxisLabel: "",
+        yAxisLabel: ""
     }
 
     render() {
@@ -57,6 +59,20 @@ class Chart extends Component {
         }
         const ChartOptions = {
             maintainAspectRatio: this.props.maintainAspectRatio,
+            scales: (this.props.xAxisLabel == "" && this.props.yAxisLabel == "") ? {} : {
+                xAxes: [{
+                    scaleLabel: {
+                        display: this.props.xAxisLabel != "",
+                        labelString: this.props.xAxisLabel,
+                    },
+                }],
+                yAxes: [{
+                    scaleLabel: {
+                        display: this.props.yAxisLabel != "",
+                        labelString: this.props.yAxisLabel,
+                    },
+                }]
+            }
         }
 
         return (

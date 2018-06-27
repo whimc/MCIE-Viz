@@ -4,7 +4,7 @@ import './App.css';
 import Chart from './Components/Chart'
 import TimeChart from './Components/TimeChart'
 
-// const TEST_JSON = require('./TestJSON/CUCFL.json');
+const TEST_JSON = require('./TestJSON/latest_analysis.json');
 
 const GENERAL_LABELS = ["Blocks Traveled/10", "Blocks Placed", "Blocks Broken", "Chat Messages", "Commands"];
 
@@ -133,9 +133,9 @@ class App extends Component {
    * Example JSON: https://pastebin.com/raw/WP0zf79h
    */
   generateButtonClick() {
+
     this.disableGenerateButton();
     this.loadingAnimation();
-    // fetch("https://1luht6078g.execute-api.us-west-2.amazonaws.com/demo/GetLatestAnalysis")
       fetch("https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/getlatestanalysis/341")
       .then(response => response.json())
       .then(data => {
@@ -163,7 +163,31 @@ class App extends Component {
         this.showAnalysis();
       }
     );
-    
+
+// FOR TESTING
+// this.setState({
+//   username: TEST_JSON["username"],
+//   start_time: TEST_JSON["startTime"],
+//   end_time: TEST_JSON["endTime"],
+//   loaded: true,
+//   analysis_JSON: [JSON.stringify(TEST_JSON)],
+//   analysis_general: [
+//     TEST_JSON["blocksTraveled"]/10,
+//     TEST_JSON["blocksPlaced"],
+//     TEST_JSON["blocksBroken"],
+//     TEST_JSON["chatMessages"],
+//     TEST_JSON["commands"]
+//   ],
+//   analysis_STEM_keys: Object.keys(TEST_JSON["stemAreas"]),
+//   analysis_STEM_values: Object.values(TEST_JSON["stemAreas"]),
+//   analysis_STEM_times: TEST_JSON["areaTimes"],
+//   analysis_biome_keys: Object.keys(TEST_JSON["biomeTimes"]),
+//   analysis_biome_values: Object.values(TEST_JSON["biomeTimes"]),
+// });
+// this.hideGenerateButton();
+// this.normalAnimation();
+// this.showAnalysis();
+
   }
 
   render() {
@@ -209,7 +233,7 @@ class App extends Component {
           <div>
             <h3>Biome Statistics</h3>
             <div className="chart-container">
-              <Chart type='Bar' labels={this.state.analysis_biome_keys} data={this.state.analysis_biome_values} />
+              <Chart type='Bar' labels={this.state.analysis_biome_keys} data={this.state.analysis_biome_values} yAxisLabel='Time (Seconds)'/>
               <Chart type='Pie' labels={this.state.analysis_biome_keys} data={this.state.analysis_biome_values} />
               <Chart type='Doughnut' labels={this.state.analysis_biome_keys} data={this.state.analysis_biome_values} />
             </div>
@@ -220,7 +244,7 @@ class App extends Component {
           <div>
             <h3>STEM Field Analysis</h3>
             <div className="chart-container">
-              <Chart type='Bar' labels={this.state.analysis_STEM_keys} data={this.state.analysis_STEM_values} />
+              <Chart type='Bar' labels={this.state.analysis_STEM_keys} data={this.state.analysis_STEM_values} yAxisLabel='Points'/>
               <Chart type='Pie' labels={this.state.analysis_STEM_keys} data={this.state.analysis_STEM_values} />
               <Chart type='Doughnut' labels={this.state.analysis_STEM_keys} data={this.state.analysis_STEM_values} />
               <TimeChart data={this.state.analysis_STEM_times} />

@@ -47,7 +47,7 @@ function getData(area_data) {
     var data = [];
     for (var ind in area_data) {
 
-        // if (area_data[ind]['seconds'] == 0) continue;
+        // if (area_data[ind]['seconds'] != 0 && area_data[ind]['points'] == 0) continue;
 
         data.push({
             't': new Date(area_data[ind]['seconds']),
@@ -79,17 +79,26 @@ class TimeChart extends Component {
             maintainAspectRatio: this.props.maintainAspectRatio,
             scales: {
                 xAxes: [{
-                    // type: 'time',
                     type: 'linear',
                     ticks: {
                         beginAtZero: true,
-                        stepSize: 5,
+                        stepSize: 3,
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Time (Minutes)'
                     },
                     // time: {
                     //     tooltipFormat: 'mm:ss',
                     //     unit: 'minute',
                     //     // unitStepSize: '5'
                     // }
+                }],
+                yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Points'
+                    },
                 }]
             }
         }

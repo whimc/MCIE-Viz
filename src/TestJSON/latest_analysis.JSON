@@ -18,114 +18,230 @@
     "areaTimes": {
       "CITY": [
         {
-          "minute": 0,
+          "seconds": 0,
           "points": 0
         },
         {
-          "minute": 17,
+          "seconds": 3,
+          "points": 0
+        },
+        {
+          "seconds": 6,
+          "points": 0
+        },
+        {
+          "seconds": 9,
+          "points": 0
+        },
+        {
+          "seconds": 12,
+          "points": 0
+        },
+        {
+          "seconds": 15,
           "points": 6
         },
         {
-          "minute": 18,
+          "seconds": 18,
           "points": 12
+        },
+        {
+          "seconds": 21,
+          "points": 0
+        },
+        {
+          "seconds": 24,
+          "points": 0
         }
       ],
       "MECHE": [
         {
-          "minute": 0,
+          "seconds": 0,
           "points": 0
         },
         {
-          "minute": 6,
+          "seconds": 3,
+          "points": 0
+        },
+        {
+          "seconds": 6,
           "points": 3
+        },
+        {
+          "seconds": 9,
+          "points": 0
+        },
+        {
+          "seconds": 12,
+          "points": 0
+        },
+        {
+          "seconds": 15,
+          "points": 0
+        },
+        {
+          "seconds": 18,
+          "points": 0
+        },
+        {
+          "seconds": 21,
+          "points": 0
+        },
+        {
+          "seconds": 24,
+          "points": 0
         }
       ],
       "FOR": [
         {
-          "minute": 0,
+          "seconds": 0,
           "points": 0
         },
         {
-          "minute": 6,
+          "seconds": 3,
+          "points": 0
+        },
+        {
+          "seconds": 6,
           "points": 9
+        },
+        {
+          "seconds": 9,
+          "points": 0
+        },
+        {
+          "seconds": 12,
+          "points": 0
+        },
+        {
+          "seconds": 15,
+          "points": 0
+        },
+        {
+          "seconds": 18,
+          "points": 0
+        },
+        {
+          "seconds": 21,
+          "points": 0
+        },
+        {
+          "seconds": 24,
+          "points": 0
         }
       ],
       "LAND": [
         {
-          "minute": 0,
+          "seconds": 0,
           "points": 0
         },
         {
-          "minute": 6,
+          "seconds": 3,
+          "points": 0
+        },
+        {
+          "seconds": 6,
           "points": 3
+        },
+        {
+          "seconds": 9,
+          "points": 0
+        },
+        {
+          "seconds": 12,
+          "points": 0
+        },
+        {
+          "seconds": 15,
+          "points": 0
+        },
+        {
+          "seconds": 18,
+          "points": 0
+        },
+        {
+          "seconds": 21,
+          "points": 0
+        },
+        {
+          "seconds": 24,
+          "points": 0
         }
       ],
       "ARCH": [
         {
-          "minute": 0,
+          "seconds": 0,
           "points": 0
         },
         {
-          "minute": 12,
+          "seconds": 3,
+          "points": 0
+        },
+        {
+          "seconds": 6,
+          "points": 0
+        },
+        {
+          "seconds": 9,
+          "points": 20
+        },
+        {
+          "seconds": 12,
+          "points": 16
+        },
+        {
+          "seconds": 15,
           "points": 8
         },
         {
-          "minute": 11,
-          "points": 8
+          "seconds": 18,
+          "points": 0
         },
         {
-          "minute": 10,
-          "points": 12
+          "seconds": 21,
+          "points": 0
         },
         {
-          "minute": 14,
-          "points": 8
-        },
-        {
-          "minute": 16,
-          "points": 2
-        },
-        {
-          "minute": 17,
-          "points": 6
+          "seconds": 24,
+          "points": 0
         }
       ],
       "CIVE": [
         {
-          "minute": 0,
+          "seconds": 0,
           "points": 0
         },
         {
-          "minute": 6,
+          "seconds": 3,
+          "points": 0
+        },
+        {
+          "seconds": 6,
           "points": 4
         },
         {
-          "minute": 12,
-          "points": 12
+          "seconds": 9,
+          "points": 30
         },
         {
-          "minute": 11,
-          "points": 12
+          "seconds": 12,
+          "points": 24
         },
         {
-          "minute": 10,
-          "points": 18
+          "seconds": 15,
+          "points": 16
         },
         {
-          "minute": 14,
-          "points": 12
-        },
-        {
-          "minute": 16,
-          "points": 3
-        },
-        {
-          "minute": 17,
-          "points": 13
-        },
-        {
-          "minute": 18,
+          "seconds": 18,
           "points": 8
+        },
+        {
+          "seconds": 21,
+          "points": 0
+        },
+        {
+          "seconds": 24,
+          "points": 0
         }
       ]
     },
