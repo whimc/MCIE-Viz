@@ -22,10 +22,10 @@ function getDate(timestamp) {
   var month = MONTHS[a.getMonth()];
   var year = a.getFullYear();
   var hour = a.getHours() % 12;
-  var min = a.getMinutes();
+  var min = "0" + a.getMinutes();
   var am_pm = (a.getHours() >= 12) ? "PM" : "AM";
 
-  return month + ' ' + day + ' ' + year + ' ' + hour + ':' + min + ' ' + am_pm;
+  return month + ' ' + day + ' ' + year + ' ' + hour + ':' + min.substr(-2) + ' ' + am_pm;
 }
 
 class App extends Component {
@@ -136,7 +136,7 @@ class App extends Component {
 
     this.disableGenerateButton();
     this.loadingAnimation();
-      fetch("https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/getlatestanalysis/341")
+      fetch("https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/getlatestanalysis/275")
       .then(response => response.json())
       .then(data => {
         this.setState({
@@ -209,7 +209,7 @@ class App extends Component {
           <div className="summary">
             <p><b>Start Time:</b> {getDate(this.state.start_time)}</p>
             <p><b>End Time:</b> {this.state.end_time < 0 ? "Now" : getDate(this.state.end_time)}</p>
-            <p><b>Duration:</b> {(this.state.end_time - this.state.start_time)/60} minutes</p>
+            <p><b>Duration:</b> {((this.state.end_time - this.state.start_time)/60).toFixed(2)} minutes</p>
             <p><b>Blocks Traveled:</b> {this.state.analysis_general[0]*10}</p>
             <p><b>Blocks Placed:</b> {this.state.analysis_general[1]}</p>
             <p><b>Blocks Broken:</b> {this.state.analysis_general[2]}</p>
