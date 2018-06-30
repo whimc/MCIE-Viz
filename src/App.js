@@ -210,7 +210,7 @@ class App extends Component {
             <p><b>Start Time:</b> {getDate(this.state.start_time)}</p>
             <p><b>End Time:</b> {this.state.end_time < 0 ? "Now" : getDate(this.state.end_time)}</p>
             <p><b>Duration:</b> {((this.state.end_time - this.state.start_time)/60).toFixed(2)} minutes</p>
-            <p><b>Blocks Traveled:</b> {this.state.analysis_general[0]*10}</p>
+            <p><b>Distance Traveled:</b> {this.state.analysis_general[0]*10}</p>
             <p><b>Blocks Placed:</b> {this.state.analysis_general[1]}</p>
             <p><b>Blocks Broken:</b> {this.state.analysis_general[2]}</p>
             <p><b>Messages Sent:</b> {this.state.analysis_general[3]}</p>
