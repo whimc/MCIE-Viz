@@ -20,6 +20,8 @@ const { BACKGROUND_COLOR, BORDER_COLOR } = {
     ]
 }
 
+var areaDatasets = {};
+
 function getDatasets(JSON_data) {
     var datasets = [];
     var ind = 0;
@@ -34,16 +36,18 @@ function getDatasets(JSON_data) {
             fill: false,
             pointHitRadius: 5,
             pointHoverRadius: 5,
-            data: getData(JSON_data[area]),
+            data: getData(JSON_data[area], ind),
         });
+
+        areaDatasets[ind] = area;
+
         ind += 1;
     }
 
-    console.log(datasets);
     return datasets;
 }
 
-function getData(area_data) {
+function getData(area_data, setIndex) {
     var data = [];
     for (var ind in area_data) {
 
@@ -52,15 +56,48 @@ function getData(area_data) {
         data.push({
             't': new Date(area_data[ind]['seconds']),
             'x': area_data[ind]['seconds'],
-            'y': area_data[ind]['points'],
+            'y': area_data[ind]['points']
         });
+
+        var key = setIndex + "+" + ind;
+        areaDatasets[key] = area_data[ind];
     }
 
-    data.sort(function(a, b) {
-        return a['x'] - b['x'];
-    });
+    // data.sort(function(a, b) {
+    //     return a['x'] - b['x'];
+    // });
 
     return data;
+}
+
+function pointClick(elements) {
+    if (!elements[0]) return;
+    
+    var elem = elements[0];
+
+    var setIndex = elem._datasetIndex;
+    var ind = elem._index;
+    
+    var key = setIndex + "+" + ind;
+    var breakActions = areaDatasets[key].breakActions;
+    var placeActions = areaDatasets[key].placeActions;
+
+    // console.log("Blocks broken: ", breakActions);
+    // console.log("Blocks placed: ", placeActions);
+
+    // TODO: Make this display in a better way.    
+    var breakString = "Blocks broken:\n" + (Object.keys(breakActions).length === 0 ? "None\n" : "");
+    var placeString = "Blocks placed:\n" + (Object.keys(placeActions).length === 0 ? "None\n" : "");
+
+    var block;
+    for (block in breakActions) {
+        breakString += " - " + breakActions[block] + "x " + block + "\n";
+    }
+    for (block in placeActions) {
+        placeString += " - " + placeActions[block] + "x " + block + "\n";
+    }
+
+    alert(breakString + "\n" + placeString);
 }
 
 class TimeChart extends Component {
@@ -71,6 +108,7 @@ class TimeChart extends Component {
     }
 
     render() {
+
         const ChartData = {
             datasets: getDatasets(this.props.data)
         }
@@ -87,12 +125,7 @@ class TimeChart extends Component {
                     scaleLabel: {
                         display: true,
                         labelString: 'Time (Minutes)'
-                    },
-                    // time: {
-                    //     tooltipFormat: 'mm:ss',
-                    //     unit: 'minute',
-                    //     // unitStepSize: '5'
-                    // }
+                    }
                 }],
                 yAxes: [{
                     scaleLabel: {
@@ -100,15 +133,24 @@ class TimeChart extends Component {
                         labelString: 'Points'
                     },
                 }]
-            }
+            },
+            // onClick: function(event, array) {
+            //     if (!array[0]) return;
+            //     var elem = array[0];
+            //     console.log('from options:', elem);
+            //     console.log('Dataset index: ' + elem['_datasetIndex']);
+            //     console.log('Index: ' + elem['_index']);
+
+            // }
         }
 
         return (
             <div className="chart">
-                { React.createElement(Line, {'data': ChartData, 'options': ChartOptions}, '') }
+                { React.createElement(Line, { 'data': ChartData, 'options': ChartOptions, getElementAtEvent: pointClick }, '') }
             </div>
         );
     }
+
 }
 
 export default TimeChart;
