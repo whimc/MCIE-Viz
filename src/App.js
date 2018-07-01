@@ -134,11 +134,12 @@ class App extends Component {
    */
   generateButtonClick() {
 
+    var url = "https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/getlatestanalysis/275";
+    // url = "https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/getanalysis/275+1530111921+1530113741";
+
     this.disableGenerateButton();
     this.loadingAnimation();
-      fetch("https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/getlatestanalysis/275")
-      .then(response => response.json())
-      .then(data => {
+      fetch(url).then(response => response.json()).then(data => {
         this.setState({
           username: data["username"],
           start_time: data["startTime"],
@@ -247,6 +248,7 @@ class App extends Component {
               <Chart type='Bar' labels={this.state.analysis_STEM_keys} data={this.state.analysis_STEM_values} yAxisLabel='Points'/>
               <Chart type='Pie' labels={this.state.analysis_STEM_keys} data={this.state.analysis_STEM_values} />
               <Chart type='Doughnut' labels={this.state.analysis_STEM_keys} data={this.state.analysis_STEM_values} />
+              <h4>Click on a point to see what blocks were placed/broken</h4>
               <TimeChart data={this.state.analysis_STEM_times} />
             </div>
           </div>

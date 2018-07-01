@@ -21,6 +21,7 @@ const { BACKGROUND_COLOR, BORDER_COLOR } = {
 }
 
 var areaDatasets = {};
+var datasetNames = {};
 
 function getDatasets(JSON_data) {
     var datasets = [];
@@ -39,7 +40,7 @@ function getDatasets(JSON_data) {
             data: getData(JSON_data[area], ind),
         });
 
-        areaDatasets[ind] = area;
+        datasetNames[ind] = area;
 
         ind += 1;
     }
@@ -51,11 +52,9 @@ function getData(area_data, setIndex) {
     var data = [];
     for (var ind in area_data) {
 
-        // if (area_data[ind]['seconds'] != 0 && area_data[ind]['points'] == 0) continue;
-
         data.push({
-            't': new Date(area_data[ind]['seconds']),
-            'x': area_data[ind]['seconds'],
+            't': new Date(area_data[ind]['minutes']),
+            'x': area_data[ind]['minutes'],
             'y': area_data[ind]['points']
         });
 
@@ -81,11 +80,15 @@ function pointClick(elements) {
     var key = setIndex + "+" + ind;
     var breakActions = areaDatasets[key].breakActions;
     var placeActions = areaDatasets[key].placeActions;
+    var minutes = areaDatasets[key]['minutes'];
+    var points = areaDatasets[key]['points'];
 
     // console.log("Blocks broken: ", breakActions);
     // console.log("Blocks placed: ", placeActions);
 
     // TODO: Make this display in a better way.    
+    
+    var header = datasetNames[setIndex] + " (" + minutes + "," + points + ")";
     var breakString = "Blocks broken:\n" + (Object.keys(breakActions).length === 0 ? "None\n" : "");
     var placeString = "Blocks placed:\n" + (Object.keys(placeActions).length === 0 ? "None\n" : "");
 
@@ -97,7 +100,7 @@ function pointClick(elements) {
         placeString += " - " + placeActions[block] + "x " + block + "\n";
     }
 
-    alert(breakString + "\n" + placeString);
+    alert(header + "\n\n" + breakString + "\n" + placeString);
 }
 
 class TimeChart extends Component {
@@ -133,15 +136,7 @@ class TimeChart extends Component {
                         labelString: 'Points'
                     },
                 }]
-            },
-            // onClick: function(event, array) {
-            //     if (!array[0]) return;
-            //     var elem = array[0];
-            //     console.log('from options:', elem);
-            //     console.log('Dataset index: ' + elem['_datasetIndex']);
-            //     console.log('Index: ' + elem['_index']);
-
-            // }
+            }
         }
 
         return (
