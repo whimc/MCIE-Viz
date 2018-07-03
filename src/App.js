@@ -143,7 +143,6 @@ class App extends Component {
   }
 
   selectButtonClick(buttonID) {
-    console.log(buttonID + " clicked");
     var button = document.getElementById(buttonID);
     if (!button) return;
     this.toggleButton(buttonID);
