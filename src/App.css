@@ -71,7 +71,7 @@
 }
 
 .innerButton {
-  margin: 0px 5px;
+  margin: 0px 5px 10px;
   display: inline-block;
 }
 
@@ -141,4 +141,8 @@ hr {
 	-webkit-border-radius:9px;
 	border-radius:9px;
 	border:1px solid #dfdfdf;
+}
+
+.disabledDiv {
+  display: none;
 }

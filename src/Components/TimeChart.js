@@ -108,6 +108,7 @@ class TimeChart extends Component {
     static defaultProps = {
         label: 'Session',
         maintainAspectRatio: false,
+        className: "",
     }
 
     render() {
@@ -140,7 +141,7 @@ class TimeChart extends Component {
         }
 
         return (
-            <div className="chart">
+            <div className={"chart " + this.props.className}>
                 { React.createElement(Line, { 'data': ChartData, 'options': ChartOptions, getElementAtEvent: pointClick }, '') }
             </div>
         );

@@ -41,7 +41,8 @@ class Chart extends Component {
         label: 'Session',
         maintainAspectRatio: false,
         xAxisLabel: "",
-        yAxisLabel: ""
+        yAxisLabel: "",
+        className: "",
     }
 
     render() {
@@ -76,7 +77,7 @@ class Chart extends Component {
         }
 
         return (
-            <div className="chart">
+            <div className={"chart " + this.props.className}>
                 { React.createElement(components[ChartType], {'data': ChartData, 'options': ChartOptions}, '') }
             </div>
         );

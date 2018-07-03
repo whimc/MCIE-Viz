@@ -11,13 +11,15 @@ const GENERAL_LABELS = ["Blocks Traveled/10", "Blocks Placed", "Blocks Broken", 
 
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-const generalID = "general_actions", biomeTimesID = "biome_times", fieldAnalysisID = "field_analysis";
+// const generalID = "general_actions", biomeTimesID = "biome_times", fieldAnalysisID = "field_analysis";
 const generalSelect = "general_select", biomeSelect = "biome_select", fieldSelect = "field_select";
-const buttonToID = {
-  "general_select": generalID,
-  "biome_select": biomeTimesID,
-  "field_select": fieldAnalysisID
-}
+const barSelect = "bar_select", pieSelect = "pie_select", donutSelect = "donut_select", lineSelect = "line_select";
+
+// const buttonToID = {
+//   "general_select": generalID,
+//   "biome_select": biomeTimesID,
+//   "field_select": fieldAnalysisID
+// }
 
 function getDate(timestamp) {
 
@@ -65,17 +67,21 @@ class App extends Component {
       analysis_biome_keys: [],
       // Values for biomes
       analysis_biome_values: [],
-      // Button classes
+      // If each of these buttons is disabled
       buttonStates: {
         'general_select': false,
         'biome_select': false,
         'field_select': false,
+        
+        'bar_select': false,
+        'pie_select': false,
+        'donut_select': false,
+        'line_select': false,
       },
     };
 
     // Binding button click function to button click
     this.generateButtonClick = this.generateButtonClick.bind(this);
-    // this.selectButtonClick = this.selectButtonClick.bind(this);
   }
 
   /**
@@ -135,7 +141,7 @@ class App extends Component {
    */
   loadingAnimation() {
     var logo = document.getElementById("logo");
-    var property = "App-logo-spin-loading infinite 1s alternate ease-in-out";
+    var property = "App-logo-spin-loading infinite 1s alternate ease-in-out"; 
     logo.style['-webkit-animation'] = property;
     logo.style['-moz-animation'] = property;
     logo.style['-o-animation'] = property;
@@ -143,15 +149,20 @@ class App extends Component {
   }
 
   selectButtonClick(buttonID) {
-    var button = document.getElementById(buttonID);
-    if (!button) return;
-    this.toggleButton(buttonID);
 
-    var id = buttonToID[buttonID];
-    var selection = document.getElementById(id);
-    if (!selection) return;
+    this.toggleButtonState(buttonID);
 
-    selection.style.display = (this.state.buttonStates[buttonID] ? "none" : "block");
+    // var id = buttonToID[buttonID];
+    // var selection = document.getElementById(id);
+    // if (!selection) return;
+
+    // var currentStates = this.state.buttonStates;
+    // var buttonState = currentStates[buttonID];
+
+    // currentStates[buttonID] = !buttonState;
+    // this.setState({buttonStates: currentStates});
+
+    // selection.style.display = (this.state.buttonStates[buttonID] ? "none" : "block");
 
     var line1 = document.getElementById("line1");
     var line2 = document.getElementById("line2");
@@ -171,8 +182,7 @@ class App extends Component {
     }
   }
 
-
-  toggleButton(buttonID) {
+  toggleButtonState(buttonID) {
     var tempButtonStates = this.state.buttonStates;
     var buttonState = tempButtonStates[buttonID];
 
@@ -246,19 +256,57 @@ class App extends Component {
   render() {
     var generalBtnClass = classNames({
       "myButton": true,
-      "disabledButton": this.state.buttonStates['general_select'],
+      "disabledButton": this.state.buttonStates[generalSelect],
     });
-
     var biomesBtnClass = classNames({
       "myButton": true,
-      "disabledButton": this.state.buttonStates['biome_select'],
+      "disabledButton": this.state.buttonStates[biomeSelect],
     });
-
     var fieldsBtnClass = classNames({
       "myButton": true,
-      "disabledButton": this.state.buttonStates['field_select'],
+      "disabledButton": this.state.buttonStates[fieldSelect],
     });
 
+    var generalClass = classNames({
+      "disabledDiv": this.state.buttonStates[generalSelect],
+    });
+    var biomesClass = classNames({
+      "disabledDiv": this.state.buttonStates[biomeSelect],
+    });
+    var fieldsClass = classNames({
+      "disabledDiv": this.state.buttonStates[fieldSelect],
+    });
+
+    var barBtnClass = classNames({
+      "myButton": true,
+      "disabledButton": this.state.buttonStates[barSelect]
+    });
+    var pieBtnClass = classNames({
+      "myButton": true,
+      "disabledButton": this.state.buttonStates[pieSelect]
+    });
+    var donutBtnClass = classNames({
+      "myButton": true,
+      "disabledButton": this.state.buttonStates[donutSelect]
+    });
+    var lineBtnClass = classNames({
+      "myButton": true,
+      "disabledButton": this.state.buttonStates[lineSelect]
+    });
+
+    var barClass = classNames({
+      "disabledDiv": this.state.buttonStates[barSelect]
+    });
+    var pieClass = classNames({
+      "disabledDiv": this.state.buttonStates[pieSelect]
+    });
+    var donutClass = classNames({
+      "disabledDiv": this.state.buttonStates[donutSelect]
+    });
+    var lineClass = classNames({
+      "disabledDiv": this.state.buttonStates[lineSelect]
+    });
+    
     return (
       <div className="App">
         <header className="App-header">
@@ -288,49 +336,62 @@ class App extends Component {
           <hr/>
 
           <div className="selectButtons">
-            <div className="innerButton"><button id={generalSelect} className={generalBtnClass} 
+            <div className="innerButton"><button className={generalBtnClass} 
               onClick={ () => this.selectButtonClick(generalSelect)}>General Actions</button></div>
               
-            <div className="innerButton"><button id={biomeSelect} className={biomesBtnClass} 
+            <div className="innerButton"><button className={biomesBtnClass} 
               onClick={ () => this.selectButtonClick(biomeSelect)}>Biome Statistics</button></div>
 
-            <div className="innerButton"><button id={fieldSelect} className={fieldsBtnClass} 
+            <div className="innerButton"><button className={fieldsBtnClass} 
               onClick={ () => this.selectButtonClick(fieldSelect)}>Field Analysis</button></div>
+          </div>
 
+          <div className="selectButtons">
+            <div className="innerButton"><button className={barBtnClass} 
+              onClick={ () => this.selectButtonClick(barSelect)}>Bar Graph</button></div>
+              
+            <div className="innerButton"><button className={pieBtnClass} 
+              onClick={ () => this.selectButtonClick(pieSelect)}>Pie Chart</button></div>
+
+            <div className="innerButton"><button className={donutBtnClass} 
+              onClick={ () => this.selectButtonClick(donutSelect)}>Donut Chart</button></div>
+
+            <div className="innerButton"><button className={lineBtnClass} 
+              onClick={ () => this.selectButtonClick(lineSelect)}>Line Graph</button></div>
           </div>
 
           
 
-          <div id={generalID}>
+          <div className={generalClass}>
             <h3>General Action Statistics</h3>
             <div className="chart-container">
-              <Chart type='Bar' labels={GENERAL_LABELS} data={this.state.analysis_general} />
-              <Chart type='Pie' labels={GENERAL_LABELS} data={this.state.analysis_general} />
-              <Chart type='Doughnut' labels={GENERAL_LABELS} data={this.state.analysis_general} />
+              <Chart type='Bar' className={barClass} labels={GENERAL_LABELS} data={this.state.analysis_general} />
+              <Chart type='Pie' className={pieClass} labels={GENERAL_LABELS} data={this.state.analysis_general} />
+              <Chart type='Doughnut' className={donutClass} labels={GENERAL_LABELS} data={this.state.analysis_general} />
             </div>
           </div>
 
           <hr id="line1"/>
 
-          <div id={biomeTimesID}>
+          <div className={biomesClass}>
             <h3>Biome Statistics</h3>
             <div className="chart-container">
-              <Chart type='Bar' labels={this.state.analysis_biome_keys} data={this.state.analysis_biome_values} yAxisLabel='Time (Seconds)'/>
-              <Chart type='Pie' labels={this.state.analysis_biome_keys} data={this.state.analysis_biome_values} />
-              <Chart type='Doughnut' labels={this.state.analysis_biome_keys} data={this.state.analysis_biome_values} />
+              <Chart type='Bar' className={barClass} labels={this.state.analysis_biome_keys} data={this.state.analysis_biome_values} yAxisLabel='Time (Seconds)'/>
+              <Chart type='Pie' className={pieClass} labels={this.state.analysis_biome_keys} data={this.state.analysis_biome_values} />
+              <Chart type='Doughnut' className={donutClass} labels={this.state.analysis_biome_keys} data={this.state.analysis_biome_values} />
             </div>
           </div>
 
           <hr id="line2"/>
 
-          <div id={fieldAnalysisID}>
+          <div className={fieldsClass}>
             <h3>STEM Field Analysis</h3>
             <div className="chart-container">
-              <Chart type='Bar' labels={this.state.analysis_STEM_keys} data={this.state.analysis_STEM_values} yAxisLabel='Points'/>
-              <Chart type='Pie' labels={this.state.analysis_STEM_keys} data={this.state.analysis_STEM_values} />
-              <Chart type='Doughnut' labels={this.state.analysis_STEM_keys} data={this.state.analysis_STEM_values} />
+              <Chart type='Bar' className={barClass} labels={this.state.analysis_STEM_keys} data={this.state.analysis_STEM_values} yAxisLabel='Points'/>
+              <Chart type='Pie' className={pieClass} labels={this.state.analysis_STEM_keys} data={this.state.analysis_STEM_values} />
+              <Chart type='Doughnut' className={donutClass} labels={this.state.analysis_STEM_keys} data={this.state.analysis_STEM_values} />
               <h4>Click on a point to see what blocks were placed/broken</h4>
-              <TimeChart data={this.state.analysis_STEM_times} />
+              <TimeChart className={lineClass} data={this.state.analysis_STEM_times} />
             </div>
           </div>
 
