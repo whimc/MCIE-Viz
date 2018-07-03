@@ -3,12 +3,21 @@ import logo from './MCIE.png';
 import './App.css';
 import Chart from './Components/Chart'
 import TimeChart from './Components/TimeChart'
+import classNames from 'classnames';
 
 // const TEST_JSON = require('./TestJSON/latest_analysis.json');
 
 const GENERAL_LABELS = ["Blocks Traveled/10", "Blocks Placed", "Blocks Broken", "Chat Messages", "Commands"];
 
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+const generalID = "general_actions", biomeTimesID = "biome_times", fieldAnalysisID = "field_analysis";
+const generalSelect = "general_select", biomeSelect = "biome_select", fieldSelect = "field_select";
+const buttonToID = {
+  "general_select": generalID,
+  "biome_select": biomeTimesID,
+  "field_select": fieldAnalysisID
+}
 
 function getDate(timestamp) {
 
@@ -55,11 +64,18 @@ class App extends Component {
       // Keys for biomes
       analysis_biome_keys: [],
       // Values for biomes
-      analysis_biome_values: []
+      analysis_biome_values: [],
+      // Button classes
+      buttonStates: {
+        'general_select': false,
+        'biome_select': false,
+        'field_select': false,
+      },
     };
 
     // Binding button click function to button click
     this.generateButtonClick = this.generateButtonClick.bind(this);
+    // this.selectButtonClick = this.selectButtonClick.bind(this);
   }
 
   /**
@@ -126,7 +142,44 @@ class App extends Component {
     logo.style['animation'] = property;
   }
 
-  
+  selectButtonClick(buttonID) {
+    console.log(buttonID + " clicked");
+    var button = document.getElementById(buttonID);
+    if (!button) return;
+    this.toggleButton(buttonID);
+
+    var id = buttonToID[buttonID];
+    var selection = document.getElementById(id);
+    if (!selection) return;
+
+    selection.style.display = (this.state.buttonStates[buttonID] ? "none" : "block");
+
+    var line1 = document.getElementById("line1");
+    var line2 = document.getElementById("line2");
+
+    var generalOn = !this.state.buttonStates[generalSelect];
+    var biomeOn = !this.state.buttonStates[biomeSelect];
+    var fieldOn = !this.state.buttonStates[fieldSelect];
+
+    line1.style.display = "none";
+    line2.style.display = "none";
+
+    if (generalOn) {
+      if (biomeOn || fieldOn) line1.style.display = "block";
+      if (biomeOn && fieldOn) line2.style.display = "block";
+    } else {
+      if (biomeOn && fieldOn) line2.style.display = "block";
+    }
+  }
+
+
+  toggleButton(buttonID) {
+    var tempButtonStates = this.state.buttonStates;
+    var buttonState = tempButtonStates[buttonID];
+
+    tempButtonStates[buttonID] = !buttonState;
+    this.setState({buttonStates: tempButtonStates});
+  }
 
   /**
    * Retrieves analysis as a JSON file and displays it
@@ -192,6 +245,21 @@ class App extends Component {
   }
 
   render() {
+    var generalBtnClass = classNames({
+      "myButton": true,
+      "disabledButton": this.state.buttonStates['general_select'],
+    });
+
+    var biomesBtnClass = classNames({
+      "myButton": true,
+      "disabledButton": this.state.buttonStates['biome_select'],
+    });
+
+    var fieldsBtnClass = classNames({
+      "myButton": true,
+      "disabledButton": this.state.buttonStates['field_select'],
+    });
+
     return (
       <div className="App">
         <header className="App-header">
@@ -220,7 +288,21 @@ class App extends Component {
 
           <hr/>
 
-          <div>
+          <div className="selectButtons">
+            <div className="innerButton"><button id={generalSelect} className={generalBtnClass} 
+              onClick={ () => this.selectButtonClick(generalSelect)}>General Actions</button></div>
+              
+            <div className="innerButton"><button id={biomeSelect} className={biomesBtnClass} 
+              onClick={ () => this.selectButtonClick(biomeSelect)}>Biome Statistics</button></div>
+
+            <div className="innerButton"><button id={fieldSelect} className={fieldsBtnClass} 
+              onClick={ () => this.selectButtonClick(fieldSelect)}>Field Analysis</button></div>
+
+          </div>
+
+          
+
+          <div id={generalID}>
             <h3>General Action Statistics</h3>
             <div className="chart-container">
               <Chart type='Bar' labels={GENERAL_LABELS} data={this.state.analysis_general} />
@@ -229,9 +311,9 @@ class App extends Component {
             </div>
           </div>
 
-          <hr/>
+          <hr id="line1"/>
 
-          <div>
+          <div id={biomeTimesID}>
             <h3>Biome Statistics</h3>
             <div className="chart-container">
               <Chart type='Bar' labels={this.state.analysis_biome_keys} data={this.state.analysis_biome_values} yAxisLabel='Time (Seconds)'/>
@@ -240,9 +322,9 @@ class App extends Component {
             </div>
           </div>
 
-          <hr/>
+          <hr id="line2"/>
 
-          <div>
+          <div id={fieldAnalysisID}>
             <h3>STEM Field Analysis</h3>
             <div className="chart-container">
               <Chart type='Bar' labels={this.state.analysis_STEM_keys} data={this.state.analysis_STEM_values} yAxisLabel='Points'/>

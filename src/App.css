@@ -40,20 +40,20 @@
 }
 
 .myButton {
-	background-color:#47a3ff;
-	-moz-border-radius:9px;
-	-webkit-border-radius:9px;
-	border-radius:9px;
-	border:1px solid #337bc4;
-	display:inline-block;
-	cursor:pointer;
-	color:#ffffff;
-	font-family:Verdana;
-	font-size:18px;
-  padding:10px 20px;
+	background-color: #47a3ff;
+	-moz-border-radius :9px;
+	-webkit-border-radius: 9px;
+	border-radius: 9px;
+	border: 1px solid #337bc4;
+	display: inline-block;
+	cursor: pointer;
+	color: #ffffff;
+	font-family: Verdana;
+	font-size: 18px;
+  padding: 10px 20px;
   width: 205px;
-	text-decoration:none;
-	text-shadow:0px 1px 0px #528ecc;
+	text-decoration: none;
+	text-shadow: 0px 1px 0px #528ecc;
 }
 
 .myButton:hover {
@@ -65,13 +65,27 @@
 	top:1px;
 }
 
+.selectButtons {
+  width:100%;
+  text-align: center;
+}
+
+.innerButton {
+  margin: 0px 5px;
+  display: inline-block;
+}
+
 button:focus {
   outline: 0;
 }
 
 button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.disabledButton {
+  opacity: 0.6;
 }
 
 h3 {
