@@ -9,7 +9,8 @@ import classNames from 'classnames';
 
 const GENERAL_LABELS = ["Blocks Traveled/10", "Blocks Placed", "Blocks Broken", "Chat Messages", "Commands"];
 
-const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const LONG_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const SHORT_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec']
 
 // const generalID = "general_actions", biomeTimesID = "biome_times", fieldAnalysisID = "field_analysis";
 const generalSelect = "general_select", biomeSelect = "biome_select", fieldSelect = "field_select";
@@ -21,7 +22,7 @@ const barSelect = "bar_select", pieSelect = "pie_select", donutSelect = "donut_s
 //   "field_select": fieldAnalysisID
 // }
 
-function getDate(timestamp) {
+function getDate(timestamp, short=false) {
 
   if (timestamp < 0) {
     return "None";
@@ -30,9 +31,10 @@ function getDate(timestamp) {
   var a = new Date(timestamp * 1000);
 
   var day = a.getDate();
-  var month = MONTHS[a.getMonth()];
+  var month = (short ? SHORT_MONTHS[a.getMonth()] : LONG_MONTHS[a.getMonth()]);
   var year = a.getFullYear();
   var hour = a.getHours() % 12;
+  if (hour === 0) hour = 12;
   var min = "0" + a.getMinutes();
   var am_pm = (a.getHours() >= 12) ? "PM" : "AM";
 
@@ -45,6 +47,20 @@ class App extends Component {
     super(props);
     
     this.state = {
+      // Id of the selected user
+      current_user_id: -1,
+      // Id of the selected session
+      current_user_session: -1,
+      // List of users to populate the drop down menu
+      user_list: [],
+      // Default users in drop down
+      user_list_default: [],
+      // List of sessions for selected user
+      session_time: [],
+      // Whether or not the options part is disabled
+      options_state: false,
+
+
       // Username of user being analyzed
       username: "",
       // Start time of session being analyzed
@@ -67,6 +83,8 @@ class App extends Component {
       analysis_biome_keys: [],
       // Values for biomes
       analysis_biome_values: [],
+
+
       // If each of these buttons is disabled
       buttonStates: {
         'general_select': false,
@@ -82,12 +100,15 @@ class App extends Component {
 
     // Binding button click function to button click
     this.generateButtonClick = this.generateButtonClick.bind(this);
+    this.handleChangeUser = this.handleChangeUser.bind(this);
+    this.handleChangeSession = this.handleChangeSession.bind(this);
   }
 
   /**
    * Hides the unloaded analysis parts until they're all loaded
    */
   componentDidMount() {
+    this.generateUserList();
     this.hideAnalysis();
   }
 
@@ -119,9 +140,12 @@ class App extends Component {
   /**
    * Hides generate button
    */
-  hideGenerateButton(){
-    var button = document.getElementById("generate_button");
-    button.style.display = "none";
+  hideOptionsMenu(){
+    this.setState({
+      options_state: true,
+    })
+    // var button = document.getElementById("generate_button");
+    // button.style.display = "none";
   }
 
   /**
@@ -148,6 +172,10 @@ class App extends Component {
     logo.style['animation'] = property;
   }
 
+  /**
+   * Handles clicking a select button
+   * @param {*} buttonID ID of the clicked button
+   */
   selectButtonClick(buttonID) {
 
     this.toggleButtonState(buttonID);
@@ -182,6 +210,10 @@ class App extends Component {
     }
   }
 
+  /**
+   * Toggles the state of a button between enabled/disabled
+   * @param {*} buttonID ID of the clicked button
+   */
   toggleButtonState(buttonID) {
     var tempButtonStates = this.state.buttonStates;
     var buttonState = tempButtonStates[buttonID];
@@ -191,13 +223,94 @@ class App extends Component {
   }
 
   /**
+   * Generates a list of users for the dropdown select menu
+   */
+  generateUserList() {
+    var url = "https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/getallusers/";
+    fetch(url).then(response => response.json()).then(data => {
+      var select = document.getElementById("user_dropdown");
+      select.options.length = 1;
+
+      data.sort(function(a, b) {
+        var nameA = a.username.toLowerCase(), nameB = b.username.toLowerCase();
+        if (nameA < nameB) {
+          return -1;
+        }
+        if (nameA > nameB) {
+          return 1;
+        }
+        return 0;
+      })
+
+      data.forEach(obj => {
+        var option = document.createElement("option");
+        option.innerHTML = obj.username;
+        option.value = obj.userId;
+        select.appendChild(option);
+      });
+
+    });
+  }
+
+  /**
+   * Handles what user is currently selected
+   * @param {*} event event being triggered
+   */
+  handleChangeUser(event) {
+    this.setState({
+      current_user_id: event.target.value,
+      current_user_session: -1,
+    }, function() {
+      this.generateUserSessions();
+    });
+  }
+
+  generateUserSessions() {
+    if (this.state.current_user_id === -1) return;
+
+    var select = document.getElementById("session_dropdown")
+    select.options.length = 1
+    select.selectedIndex = 0
+
+    var url = "https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/getsessions/" + this.state.current_user_id;
+    fetch(url).then(response => response.json()).then(data => {
+      
+      data.sort(function(a, b) {
+        return b.loginTime - a.loginTime;
+      })
+
+      data.forEach(obj => {
+        var option = document.createElement("option")
+        option.innerHTML = getDate(obj.loginTime, true)
+        option.value = obj.loginTime + "+" + obj.logoutTime
+        select.appendChild(option)
+      });
+    });
+
+  }
+
+  handleChangeSession(event) {
+    this.setState({
+      current_user_session: event.target.value,
+    });
+  }
+
+  /**
    * Retrieves analysis as a JSON file and displays it
    * Example JSON: https://pastebin.com/raw/WP0zf79h
    */
   generateButtonClick() {
 
-    var url = "https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/getlatestanalysis/275";
-    // url = "https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/getanalysis/275+1530111921+1530113741";
+    if (this.state.current_user_id === -1 || this.state.current_user_session === -1) {
+      alert("Please select a user id and a session!")
+      return;
+    }
+
+    // var url = "https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/getlatestanalysis/275";
+    var url = "https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/getanalysis/";
+    url += this.state.current_user_id + "+" + this.state.current_user_session;
+    // console.log(url);
+    // url = "https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/getanalysis/275+1530374999+1530377076";
 
     this.disableGenerateButton();
     this.loadingAnimation();
@@ -221,7 +334,7 @@ class App extends Component {
           analysis_biome_keys: Object.keys(data["biomeTimes"]),
           analysis_biome_values: Object.values(data["biomeTimes"]),
         });
-        this.hideGenerateButton();
+        this.hideOptionsMenu();
         this.normalAnimation();
         this.showAnalysis();
       }
@@ -254,6 +367,10 @@ class App extends Component {
   }
 
   render() {
+    var generateOptionsClass = classNames({
+      "disabledDiv": this.state.options_state,
+    })
+
     var generalBtnClass = classNames({
       "myButton": true,
       "disabledButton": this.state.buttonStates[generalSelect],
@@ -314,12 +431,25 @@ class App extends Component {
           <h1 className="App-title">Minecraft Interest Engine</h1>
         </header>
 
-        <h3>
-          <button id="generate_button" onClick={this.generateButtonClick} className="myButton">
-            Generate Analysis
-          </button>
-        </h3>
+        {/* First screen -- selecting which user and which session to analyze */}
+        <div className={generateOptionsClass}>
+          <div>
+            <select className="custom-select" id="user_dropdown" defaultValue="" onChange={this.handleChangeUser}>
+              <option value="" disabled>Select a user</option>
+            </select>
+            <select className="custom-select" id="session_dropdown" defaultValue="" onChange={this.handleChangeSession}>
+              <option value="" disabled>Select a session</option>
+            </select>
+          </div>
 
+          <h3>
+            <button id="generate_button" onClick={this.generateButtonClick} className="myButton">
+              Generate Analysis
+            </button>
+          </h3>
+        </div>
+
+        {/* Second screen -- showing entire analysis */}
         <div className="analysis" id="analysis_data">
           <h3>{this.state.username}'s Summary:</h3>
           <div className="summary">
@@ -335,6 +465,7 @@ class App extends Component {
 
           <hr/>
 
+          {/* Buttons for selecting which sections of the analysis to show */}
           <div className="selectButtons">
             <div className="innerButton"><button className={generalBtnClass} 
               onClick={ () => this.selectButtonClick(generalSelect)}>General Actions</button></div>
@@ -346,6 +477,7 @@ class App extends Component {
               onClick={ () => this.selectButtonClick(fieldSelect)}>Field Analysis</button></div>
           </div>
 
+          {/* Buttons for selecting which types of graphs to show */}
           <div className="selectButtons">
             <div className="innerButton"><button className={barBtnClass} 
               onClick={ () => this.selectButtonClick(barSelect)}>Bar Graph</button></div>
@@ -361,7 +493,7 @@ class App extends Component {
           </div>
 
           
-
+          {/* Analysis of general actions */}
           <div className={generalClass}>
             <h3>General Action Statistics</h3>
             <div className="chart-container">
@@ -373,6 +505,7 @@ class App extends Component {
 
           <hr id="line1"/>
 
+          {/* Statistics of biome times */}
           <div className={biomesClass}>
             <h3>Biome Statistics</h3>
             <div className="chart-container">
@@ -384,13 +517,14 @@ class App extends Component {
 
           <hr id="line2"/>
 
+          {/* Analysis of STEM fields */}
           <div className={fieldsClass}>
             <h3>STEM Field Analysis</h3>
             <div className="chart-container">
               <Chart type='Bar' className={barClass} labels={this.state.analysis_STEM_keys} data={this.state.analysis_STEM_values} yAxisLabel='Points'/>
               <Chart type='Pie' className={pieClass} labels={this.state.analysis_STEM_keys} data={this.state.analysis_STEM_values} />
               <Chart type='Doughnut' className={donutClass} labels={this.state.analysis_STEM_keys} data={this.state.analysis_STEM_values} />
-              <h4>Click on a point to see what blocks were placed/broken</h4>
+              <h4 className={lineClass}>Click on a point to see what blocks were placed/broken</h4>
               <TimeChart className={lineClass} data={this.state.analysis_STEM_times} />
             </div>
           </div>

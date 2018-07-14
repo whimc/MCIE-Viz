@@ -39,6 +39,22 @@
   to { transform: scale(0.5) rotate(360deg); }
 }
 
+.custom-select {
+  position: relative;
+  font-family: Verdana;
+  font-size: 14px;
+  padding: 10px 10px;
+  margin: 20px 10px;
+  /* background-color: #6db6ff; */
+  /* color: white; */
+  -moz-border-radius :9px;
+	-webkit-border-radius: 9px;
+	border-radius: 3px;
+  /* border: 1px solid #337bc4; */
+  border: 1px solid gray;
+  width: 220px
+}
+
 .myButton {
 	background-color: #47a3ff;
 	-moz-border-radius :9px;
