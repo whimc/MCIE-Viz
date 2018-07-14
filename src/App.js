@@ -12,16 +12,14 @@ const GENERAL_LABELS = ["Blocks Traveled/10", "Blocks Placed", "Blocks Broken", 
 const LONG_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 const SHORT_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec']
 
-// const generalID = "general_actions", biomeTimesID = "biome_times", fieldAnalysisID = "field_analysis";
 const generalSelect = "general_select", biomeSelect = "biome_select", fieldSelect = "field_select";
 const barSelect = "bar_select", pieSelect = "pie_select", donutSelect = "donut_select", lineSelect = "line_select";
 
-// const buttonToID = {
-//   "general_select": generalID,
-//   "biome_select": biomeTimesID,
-//   "field_select": fieldAnalysisID
-// }
-
+/**
+ * Gets a nicely formatted version of a timestamp
+ * @param {*} timestamp Timestamp to get the time of.
+ * @param {boolean} short Whether or not to give the short version of a month
+ */
 function getDate(timestamp, short=false) {
 
   if (timestamp < 0) {
@@ -39,6 +37,19 @@ function getDate(timestamp, short=false) {
   var am_pm = (a.getHours() >= 12) ? "PM" : "AM";
 
   return month + ' ' + day + ' ' + year + ' ' + hour + ':' + min.substr(-2) + ' ' + am_pm;
+}
+
+/**
+ * Gets the duration in minutes between two times
+ * @param {*} startTime Start time (in seconds)
+ * @param {*} endTime End time (in seconds)
+ * @param {boolean} decimal Whether or not to show a decimal for the duration
+ */
+function getDuration(startTime, endTime, decimal=false) {
+  var minutes = (endTime - startTime) / 60
+
+  if (decimal) return minutes.toFixed(2);
+  return parseInt(minutes, 10);
 }
 
 class App extends Component {
@@ -88,8 +99,8 @@ class App extends Component {
       // If each of these buttons is disabled
       buttonStates: {
         'general_select': false,
-        'biome_select': false,
-        'field_select': false,
+        'biome_select': true,
+        'field_select': true,
         
         'bar_select': false,
         'pie_select': false,
@@ -138,14 +149,12 @@ class App extends Component {
   }
 
   /**
-   * Hides generate button
+   * Hides initial selection menu
    */
   hideOptionsMenu(){
     this.setState({
       options_state: true,
     })
-    // var button = document.getElementById("generate_button");
-    // button.style.display = "none";
   }
 
   /**
@@ -179,18 +188,6 @@ class App extends Component {
   selectButtonClick(buttonID) {
 
     this.toggleButtonState(buttonID);
-
-    // var id = buttonToID[buttonID];
-    // var selection = document.getElementById(id);
-    // if (!selection) return;
-
-    // var currentStates = this.state.buttonStates;
-    // var buttonState = currentStates[buttonID];
-
-    // currentStates[buttonID] = !buttonState;
-    // this.setState({buttonStates: currentStates});
-
-    // selection.style.display = (this.state.buttonStates[buttonID] ? "none" : "block");
 
     var line1 = document.getElementById("line1");
     var line2 = document.getElementById("line2");
@@ -265,6 +262,9 @@ class App extends Component {
     });
   }
 
+  /**
+   * Generates and populates the dropdown menu with a list of session for the given user
+   */
   generateUserSessions() {
     if (this.state.current_user_id === -1) return;
 
@@ -280,8 +280,11 @@ class App extends Component {
       })
 
       data.forEach(obj => {
+        var duration = getDuration(obj.loginTime, obj.logoutTime)
+        if (duration < 1) return;
+        
         var option = document.createElement("option")
-        option.innerHTML = getDate(obj.loginTime, true)
+        option.innerHTML = getDate(obj.loginTime, true) + " (" + duration + " mins)"
         option.value = obj.loginTime + "+" + obj.logoutTime
         select.appendChild(option)
       });
@@ -289,6 +292,10 @@ class App extends Component {
 
   }
 
+  /**
+   * Handles selecting a session
+   * @param {*} event 
+   */
   handleChangeSession(event) {
     this.setState({
       current_user_session: event.target.value,
@@ -297,7 +304,6 @@ class App extends Component {
 
   /**
    * Retrieves analysis as a JSON file and displays it
-   * Example JSON: https://pastebin.com/raw/WP0zf79h
    */
   generateButtonClick() {
 
@@ -306,7 +312,6 @@ class App extends Component {
       return;
     }
 
-    // var url = "https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/getlatestanalysis/275";
     var url = "https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/getanalysis/";
     url += this.state.current_user_id + "+" + this.state.current_user_session;
     // console.log(url);
@@ -455,7 +460,7 @@ class App extends Component {
           <div className="summary">
             <p><b>Start Time:</b> {getDate(this.state.start_time)}</p>
             <p><b>End Time:</b> {this.state.end_time < 0 ? "Now" : getDate(this.state.end_time)}</p>
-            <p><b>Duration:</b> {((this.state.end_time - this.state.start_time)/60).toFixed(2)} minutes</p>
+            <p><b>Duration:</b> {getDuration(this.state.start_time, this.state.end_time, true)} minutes</p>
             <p><b>Distance Traveled:</b> {this.state.analysis_general[0]*10}</p>
             <p><b>Blocks Placed:</b> {this.state.analysis_general[1]}</p>
             <p><b>Blocks Broken:</b> {this.state.analysis_general[2]}</p>
@@ -503,7 +508,8 @@ class App extends Component {
             </div>
           </div>
 
-          <hr id="line1"/>
+          {/* By default, this separator is disabled */}
+          <hr id="line1" style={{display: "none"}}/>
 
           {/* Statistics of biome times */}
           <div className={biomesClass}>
@@ -515,7 +521,8 @@ class App extends Component {
             </div>
           </div>
 
-          <hr id="line2"/>
+          {/* By default, this separator is disabled */}
+          <hr id="line2" style={{display: "none"}}/>
 
           {/* Analysis of STEM fields */}
           <div className={fieldsClass}>
