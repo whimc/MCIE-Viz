@@ -54,6 +54,16 @@ function getDuration(startTime, endTime, decimal=false) {
   return parseInt(minutes, 10);
 }
 
+function getDurationOfSessions(sessions, decimal=false) {
+  var total = 0;
+  sessions.forEach((session) => {
+    total += parseFloat(getDuration(session.startTime, session.endTime, true))
+  })
+
+  if (decimal) return total.toFixed(2);
+  return parseInt(total, 10);
+}
+
 class App extends Component {
   
   constructor(props) {
@@ -314,6 +324,8 @@ class App extends Component {
         sessions.push({
           value: obj.sessionId,
           label: getDate(obj.loginTime, true) + " (" + duration + " mins)",
+          startTime: obj.loginTime,
+          endTime: obj.logoutTime,
         })
       });
 
@@ -339,9 +351,7 @@ class App extends Component {
     select_options.sessions_selected = values;
     this.setState({ SELECT: select_options });
 
-    values.forEach(value => {
-      console.log(value.label)
-    });
+    console.log("Selected sessions: " + values.map(a => a.label).join(", "));
   }
 
   /**
@@ -483,13 +493,7 @@ class App extends Component {
         {/* First screen -- selecting which user and which session to analyze */}
         <div className={generateOptionsClass}>
           <div className="selectors">
-            {/* <select className="custom-select" id="user_dropdown" defaultValue="" onChange={this.handleChangeUser}>
-              <option value="" disabled>Select a user</option>
-            </select>
-            <select className="custom-select" id="session_dropdown" defaultValue="" onChange={this.handleChangeSession}>
-              <option value="" disabled>Select a session</option>
-            </select> */}
-
+          
             <Select className="custom-select"
               placeholder="Select a user"
               options={ this.state.SELECT.users_data }
@@ -528,12 +532,17 @@ class App extends Component {
           <div className="summary">
             <p><b>Start Time:</b> {getDate(this.state.start_time)}</p>
             <p><b>End Time:</b> {this.state.end_time < 0 ? "Now" : getDate(this.state.end_time)}</p>
-            <p><b>Duration:</b> {getDuration(this.state.start_time, this.state.end_time, true)} minutes</p>
+            <p><b>Total Duration:</b> {getDurationOfSessions(this.state.SELECT.sessions_selected, true)} minutes</p>
             <p><b>Distance Traveled:</b> {this.state.analysis_general[0]*10}</p>
             <p><b>Blocks Placed:</b> {this.state.analysis_general[1]}</p>
             <p><b>Blocks Broken:</b> {this.state.analysis_general[2]}</p>
             <p><b>Messages Sent:</b> {this.state.analysis_general[3]}</p>
             <p><b>Commands Sent:</b> {this.state.analysis_general[4]}</p>
+            <Select className="custom-select"
+              placeholder={"Analyzed Sessions (" + this.state.SELECT.sessions_selected.length + ")"}
+              options={ this.state.SELECT.sessions_selected }
+              closeOnSelect={false}
+            />
           </div>
 
           <hr/>
