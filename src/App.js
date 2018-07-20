@@ -4,6 +4,8 @@ import './App.css';
 import Chart from './Components/Chart'
 import TimeChart from './Components/TimeChart'
 import classNames from 'classnames';
+import Select from 'react-select';
+import 'react-select/dist/react-select.css';
 
 // const TEST_JSON = require('./TestJSON/latest_analysis.json');
 
@@ -58,16 +60,18 @@ class App extends Component {
     super(props);
     
     this.state = {
-      // Id of the selected user
-      current_user_id: -1,
-      // Id of the selected session
-      current_user_session: -1,
-      // List of users to populate the drop down menu
-      user_list: [],
-      // Default users in drop down
-      user_list_default: [],
-      // List of sessions for selected user
-      session_time: [],
+
+      SELECT: {
+        users_loading: true,
+        users_disabled: true,
+        users_data: [],
+        users_selected: '',
+
+        sessions_loading: false,
+        sessions_disabled: true,
+        sessions_data: [],
+        sessions_selected: [],
+      },
       // Whether or not the options part is disabled
       options_state: false,
 
@@ -223,10 +227,10 @@ class App extends Component {
    * Generates a list of users for the dropdown select menu
    */
   generateUserList() {
+
     var url = "https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/getallusers/";
+    
     fetch(url).then(response => response.json()).then(data => {
-      var select = document.getElementById("user_dropdown");
-      select.options.length = 1;
 
       data.sort(function(a, b) {
         var nameA = a.username.toLowerCase(), nameB = b.username.toLowerCase();
@@ -239,66 +243,104 @@ class App extends Component {
         return 0;
       })
 
+      var users = []
       data.forEach(obj => {
-        var option = document.createElement("option");
-        option.innerHTML = obj.username;
-        option.value = obj.userId;
-        select.appendChild(option);
+        users.push({
+          value: obj.userId,
+          label: obj.username,
+        })
       });
 
+      var select_options = this.state.SELECT;
+      select_options.users_data = users;
+      this.setState({ SELECT: select_options });
+
+    }).then(() => {
+      var select_options = this.state.SELECT;
+      select_options.users_loading = false;
+      select_options.users_disabled = false;
+      this.setState({ SELECT: select_options })
     });
+    
   }
 
   /**
-   * Handles what user is currently selected
-   * @param {*} event event being triggered
+   * Handles when a user is selected
+   * @param {*} value Value of the selected user
    */
-  handleChangeUser(event) {
-    this.setState({
-      current_user_id: event.target.value,
-      current_user_session: -1,
-    }, function() {
+  handleChangeUser(value) {
+    if (this.state.SELECT.users_selected === value) return;
+
+    var select_options = this.state.SELECT;
+    if (value === null) value = '';
+
+    select_options.users_selected = value;
+    select_options.sessions_selected = [];
+    select_options.sessions_data = [];
+    select_options.sessions_disabled = true;
+
+    this.setState({ 
+        SELECT: select_options,
+        current_user_id: (value === '' ? -1 : value.value) }, () => {
       this.generateUserSessions();
     });
+
+    console.log("Selected user: " + value.label)
   }
 
   /**
-   * Generates and populates the dropdown menu with a list of session for the given user
+   * Generates and populates the dropdown menu with a list of sessions for the given user
    */
   generateUserSessions() {
-    if (this.state.current_user_id === -1) return;
+    if (this.state.SELECT.users_selected === '') return;
 
-    var select = document.getElementById("session_dropdown")
-    select.options.length = 1
-    select.selectedIndex = 0
+    var select_options = this.state.SELECT;
+    select_options.sessions_loading = true;
+    select_options.sessions_disabled = true;
+    this.setState({ SELECT: select_options });
 
-    var url = "https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/getsessions/" + this.state.current_user_id;
+    var url = "https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/getsessions/" + this.state.SELECT.users_selected.value;
     fetch(url).then(response => response.json()).then(data => {
       
       data.sort(function(a, b) {
         return b.loginTime - a.loginTime;
       })
 
+      var sessions = []
       data.forEach(obj => {
         var duration = getDuration(obj.loginTime, obj.logoutTime)
         if (duration < 1) return;
-        
-        var option = document.createElement("option")
-        option.innerHTML = getDate(obj.loginTime, true) + " (" + duration + " mins)"
-        option.value = obj.loginTime + "+" + obj.logoutTime
-        select.appendChild(option)
-      });
-    });
 
+        sessions.push({
+          value: obj.sessionId,
+          label: getDate(obj.loginTime, true) + " (" + duration + " mins)",
+        })
+      });
+
+      var select_options = this.state.SELECT;
+      select_options.sessions_data = sessions;
+      this.setState({ SELECT: select_options });
+
+    }).then(() => {
+      var select_options = this.state.SELECT;
+      select_options.sessions_loading = false;
+      select_options.sessions_disabled = false;
+      this.setState({ SELECT: select_options });
+    });
   }
 
   /**
-   * Handles selecting a session
-   * @param {*} event 
+   * Handles selecting a session(s)
+   * @param {*} values Values of the selected session(s)
    */
-  handleChangeSession(event) {
-    this.setState({
-      current_user_session: event.target.value,
+  handleChangeSession(values) {
+    if (values === null) values = []
+    var select_options = this.state.SELECT;
+    select_options.sessions_selected = values;
+    this.setState({ SELECT: select_options });
+
+    values.forEach(value => {
+      console.log(value.label)
     });
   }
 
@@ -307,13 +349,14 @@ class App extends Component {
    */
   generateButtonClick() {
 
-    if (this.state.current_user_id === -1 || this.state.current_user_session === -1) {
-      alert("Please select a user id and a session!")
+    if (this.state.SELECT.users_selected === '' || this.state.SELECT.sessions_selected === []) {
+      alert("Please select a user id and session(s)!")
       return;
     }
 
-    var url = "https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/getanalysis/";
-    url += this.state.current_user_id + "+" + this.state.current_user_session;
+    // var url = "https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/getanalysis/";
+    var url = "https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/getanalysisbysession/";
+    url += this.state.SELECT.users_selected.value + "+" + this.state.SELECT.sessions_selected.map(a => a.value).join("+");
     // console.log(url);
     // url = "https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/getanalysis/275+1530374999+1530377076";
 
@@ -339,11 +382,12 @@ class App extends Component {
           analysis_biome_keys: Object.keys(data["biomeTimes"]),
           analysis_biome_values: Object.values(data["biomeTimes"]),
         });
-        this.hideOptionsMenu();
-        this.normalAnimation();
-        this.showAnalysis();
       }
-    );
+    ).then(() => {
+      this.hideOptionsMenu();
+      this.normalAnimation();
+      this.showAnalysis();
+    });
 
 // FOR TESTING
 // this.setState({
@@ -438,13 +482,37 @@ class App extends Component {
 
         {/* First screen -- selecting which user and which session to analyze */}
         <div className={generateOptionsClass}>
-          <div>
-            <select className="custom-select" id="user_dropdown" defaultValue="" onChange={this.handleChangeUser}>
+          <div className="selectors">
+            {/* <select className="custom-select" id="user_dropdown" defaultValue="" onChange={this.handleChangeUser}>
               <option value="" disabled>Select a user</option>
             </select>
             <select className="custom-select" id="session_dropdown" defaultValue="" onChange={this.handleChangeSession}>
               <option value="" disabled>Select a session</option>
-            </select>
+            </select> */}
+
+            <Select className="custom-select"
+              placeholder="Select a user"
+              options={ this.state.SELECT.users_data }
+              value={ this.state.SELECT.users_selected }
+              removeSelected={false}
+              closeOnSelect={true}
+              onChange={ this.handleChangeUser }
+              isLoading={ this.state.SELECT.users_loading }
+              disabled={ this.state.SELECT.users_disabled }
+            />
+
+            <Select className="custom-select"
+              multi={true}
+              placeholder="Select a session"
+              options={ this.state.SELECT.sessions_data }
+              value={ this.state.SELECT.sessions_selected }
+              removeSelected={true}
+              closeOnSelect={false}
+              onChange={ this.handleChangeSession }
+              isLoading={ this.state.SELECT.sessions_loading }
+              disabled={ this.state.SELECT.sessions_disabled }
+            />
+
           </div>
 
           <h3>
