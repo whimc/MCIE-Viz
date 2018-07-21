@@ -359,7 +359,7 @@ class App extends Component {
    */
   generateButtonClick() {
 
-    if (this.state.SELECT.users_selected === '' || this.state.SELECT.sessions_selected === []) {
+    if (this.state.SELECT.users_selected === '' || this.state.SELECT.sessions_selected.length === 0) {
       alert("Please select a user id and session(s)!")
       return;
     }
