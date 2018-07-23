@@ -117,9 +117,9 @@ class App extends Component {
         'field_select': true,
         
         'bar_select': false,
-        'pie_select': false,
-        'donut_select': false,
-        'line_select': false,
+        'pie_select': true,
+        'donut_select': true,
+        'line_select': true,
       },
     };
 
