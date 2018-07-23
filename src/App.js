@@ -127,6 +127,7 @@ class App extends Component {
     this.generateButtonClick = this.generateButtonClick.bind(this);
     this.handleChangeUser = this.handleChangeUser.bind(this);
     this.handleChangeSession = this.handleChangeSession.bind(this);
+    this.reloadPage = this.reloadPage.bind(this);
   }
 
   /**
@@ -424,6 +425,10 @@ class App extends Component {
 // this.showAnalysis();
 
   }
+  
+  reloadPage() {
+    window.location.reload();
+  }
 
   render() {
     var generateOptionsClass = classNames({
@@ -543,6 +548,12 @@ class App extends Component {
               options={ this.state.SELECT.sessions_selected }
               closeOnSelect={false}
             />
+          </div>
+          
+          <div>
+            <button onClick={this.reloadPage} className="myButton">
+              Back to Home
+            </button>
           </div>
 
           <hr/>
