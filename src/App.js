@@ -558,6 +558,9 @@ class App extends Component {
             <div className="innerButton"><button className={fieldsBtnClass} 
               onClick={ () => this.selectButtonClick(fieldSelect)}>Field Analysis</button></div>
           </div>
+          <div>
+                <p>select options to generate more analysis</p>
+          </div>
 
           {/* Buttons for selecting which types of graphs to show */}
           <div className="selectButtons">
