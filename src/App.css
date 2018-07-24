@@ -92,6 +92,10 @@
   text-align: center;
 }
 
+.reloadButton {
+  margin: 20px 0 0 0;
+}
+
 .innerButton {
   margin: 0px 5px 10px;
   display: inline-block;
@@ -102,7 +106,7 @@ button:focus {
 }
 
 button:disabled {
-  opacity: 0.6;
+  opacity: 0.3;
   cursor: not-allowed;
 }
 
