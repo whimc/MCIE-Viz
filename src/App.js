@@ -250,12 +250,16 @@ class App extends Component {
     
     if (!buttonOff) return;
 
+    // Make sure that the line graph is not selected for an analysis without one.
+    if (isAnalysisButton && !this.state.buttonStates['graph_type'][lineSelect]) {
+      tempButtonStates['graph_type'][lineSelect] = true;
+      tempButtonStates['graph_type'][barSelect] = false;
+    }
+
     for (var buttonInd in tempButtonStates[path]) {
       tempButtonStates[path][buttonInd] = true;
-    }
-    
+    }    
     tempButtonStates[path][buttonID] = !buttonOff;
-    
     
     this.setState({buttonStates: tempButtonStates});
   }
@@ -452,6 +456,10 @@ class App extends Component {
 
   }
   
+  /**
+   * Reloads the page
+   * We use this to reset everything and go back to the main selecting screen
+   */
   reloadPage() {
     window.location.reload();
   }
@@ -525,6 +533,7 @@ class App extends Component {
         <div className={generateOptionsClass}>
           <div className="selectors">
           
+            {/* Dropdown for selecting a user */}
             <Select className="custom-select"
               placeholder="Select a user"
               options={ this.state.SELECT.users_data }
@@ -536,9 +545,10 @@ class App extends Component {
               disabled={ this.state.SELECT.users_disabled }
             />
 
+            {/* Dropdown for selecting one or more sessions */}
             <Select className="custom-select"
               multi={true}
-              placeholder="Select a session"
+              placeholder="Select one or more sessions"
               options={ this.state.SELECT.sessions_data }
               value={ this.state.SELECT.sessions_selected }
               removeSelected={true}
@@ -547,9 +557,9 @@ class App extends Component {
               isLoading={ this.state.SELECT.sessions_loading }
               disabled={ this.state.SELECT.sessions_disabled }
             />
-
           </div>
 
+          {/* Button to generate analysis */}
           <div>
             <button id="generate_button" onClick={this.generateButtonClick} className="myButton">
               Generate Analysis
@@ -612,7 +622,7 @@ class App extends Component {
             <div className="innerButton"><button className={donutBtnClass} 
               onClick={ () => this.selectButtonClick(donutSelect, false)}>Donut Chart</button></div>
 
-            <div className="innerButton"><button className={lineBtnClass} 
+            <div className="innerButton"><button className={lineBtnClass} disabled={this.state.buttonStates.analysis_type[fieldSelect]}
               onClick={ () => this.selectButtonClick(lineSelect, false)}>Line Graph</button></div>
           </div>
 
