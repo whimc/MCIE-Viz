@@ -112,14 +112,27 @@ class App extends Component {
 
       // If each of these buttons is disabled
       buttonStates: {
-        'general_select': false,
-        'biome_select': true,
-        'field_select': true,
+        analysis_type: {
+          'general_select': false,
+          'biome_select': true,
+          'field_select': true,
+        },
+
+        graph_type: {
+          'bar_select': false,
+          'pie_select': true,
+          'donut_select': true,
+          'line_select': true,
+        },
+
+        // 'general_select': false,
+        // 'biome_select': true,
+        // 'field_select': true,
         
-        'bar_select': false,
-        'pie_select': true,
-        'donut_select': true,
-        'line_select': true,
+        // 'bar_select': false,
+        // 'pie_select': true,
+        // 'donut_select': true,
+        // 'line_select': true,
       },
     };
 
@@ -200,16 +213,18 @@ class App extends Component {
    * Handles clicking a select button
    * @param {*} buttonID ID of the clicked button
    */
-  selectButtonClick(buttonID) {
+  selectButtonClick(buttonID, isAnalysisButton) {
 
-    this.toggleButtonState(buttonID);
+    // Toggle the button on / off
+    this.toggleButtonState(buttonID, isAnalysisButton);
 
+    // Handle the lines separating the different analyses
     var line1 = document.getElementById("line1");
     var line2 = document.getElementById("line2");
 
-    var generalOn = !this.state.buttonStates[generalSelect];
-    var biomeOn = !this.state.buttonStates[biomeSelect];
-    var fieldOn = !this.state.buttonStates[fieldSelect];
+    var generalOn = !this.state.buttonStates.analysis_type[generalSelect];
+    var biomeOn = !this.state.buttonStates.analysis_type[biomeSelect];
+    var fieldOn = !this.state.buttonStates.analysis_type[fieldSelect];
 
     line1.style.display = "none";
     line2.style.display = "none";
@@ -226,11 +241,22 @@ class App extends Component {
    * Toggles the state of a button between enabled/disabled
    * @param {*} buttonID ID of the clicked button
    */
-  toggleButtonState(buttonID) {
-    var tempButtonStates = this.state.buttonStates;
-    var buttonState = tempButtonStates[buttonID];
+  toggleButtonState(buttonID, isAnalysisButton) {
+    var path = "analysis_type";
+    if (!isAnalysisButton) path = "graph_type";
 
-    tempButtonStates[buttonID] = !buttonState;
+    var tempButtonStates = this.state.buttonStates;
+    var buttonOff = tempButtonStates[path][buttonID];
+    
+    if (!buttonOff) return;
+
+    for (var buttonInd in tempButtonStates[path]) {
+      tempButtonStates[path][buttonInd] = true;
+    }
+    
+    tempButtonStates[path][buttonID] = !buttonOff;
+    
+    
     this.setState({buttonStates: tempButtonStates});
   }
 
@@ -437,55 +463,55 @@ class App extends Component {
 
     var generalBtnClass = classNames({
       "myButton": true,
-      "disabledButton": this.state.buttonStates[generalSelect],
+      "disabledButton": this.state.buttonStates.analysis_type[generalSelect],
     });
     var biomesBtnClass = classNames({
       "myButton": true,
-      "disabledButton": this.state.buttonStates[biomeSelect],
+      "disabledButton": this.state.buttonStates.analysis_type[biomeSelect],
     });
     var fieldsBtnClass = classNames({
       "myButton": true,
-      "disabledButton": this.state.buttonStates[fieldSelect],
+      "disabledButton": this.state.buttonStates.analysis_type[fieldSelect],
     });
 
     var generalClass = classNames({
-      "disabledDiv": this.state.buttonStates[generalSelect],
+      "disabledDiv": this.state.buttonStates.analysis_type[generalSelect],
     });
     var biomesClass = classNames({
-      "disabledDiv": this.state.buttonStates[biomeSelect],
+      "disabledDiv": this.state.buttonStates.analysis_type[biomeSelect],
     });
     var fieldsClass = classNames({
-      "disabledDiv": this.state.buttonStates[fieldSelect],
+      "disabledDiv": this.state.buttonStates.analysis_type[fieldSelect],
     });
 
     var barBtnClass = classNames({
       "myButton": true,
-      "disabledButton": this.state.buttonStates[barSelect]
+      "disabledButton": this.state.buttonStates.graph_type[barSelect]
     });
     var pieBtnClass = classNames({
       "myButton": true,
-      "disabledButton": this.state.buttonStates[pieSelect]
+      "disabledButton": this.state.buttonStates.graph_type[pieSelect]
     });
     var donutBtnClass = classNames({
       "myButton": true,
-      "disabledButton": this.state.buttonStates[donutSelect]
+      "disabledButton": this.state.buttonStates.graph_type[donutSelect]
     });
     var lineBtnClass = classNames({
       "myButton": true,
-      "disabledButton": this.state.buttonStates[lineSelect]
+      "disabledButton": this.state.buttonStates.graph_type[lineSelect]
     });
 
     var barClass = classNames({
-      "disabledDiv": this.state.buttonStates[barSelect]
+      "disabledDiv": this.state.buttonStates.graph_type[barSelect]
     });
     var pieClass = classNames({
-      "disabledDiv": this.state.buttonStates[pieSelect]
+      "disabledDiv": this.state.buttonStates.graph_type[pieSelect]
     });
     var donutClass = classNames({
-      "disabledDiv": this.state.buttonStates[donutSelect]
+      "disabledDiv": this.state.buttonStates.graph_type[donutSelect]
     });
     var lineClass = classNames({
-      "disabledDiv": this.state.buttonStates[lineSelect]
+      "disabledDiv": this.state.buttonStates.graph_type[lineSelect]
     });
     
     return (
@@ -524,15 +550,22 @@ class App extends Component {
 
           </div>
 
-          <h3>
+          <div>
             <button id="generate_button" onClick={this.generateButtonClick} className="myButton">
               Generate Analysis
             </button>
-          </h3>
+          </div>
         </div>
 
         {/* Second screen -- showing entire analysis */}
         <div className="analysis" id="analysis_data">
+
+          <div>
+            <button onClick={this.reloadPage} className="myButton reloadButton">
+              Back to Home
+            </button>
+          </div>
+
           <h3>{this.state.username}'s Summary:</h3>
           <div className="summary">
             <p><b>Start Time:</b> {getDate(this.state.start_time)}</p>
@@ -549,43 +582,38 @@ class App extends Component {
               closeOnSelect={false}
             />
           </div>
-          
-          <div>
-            <button onClick={this.reloadPage} className="myButton">
-              Back to Home
-            </button>
-          </div>
 
           <hr/>
+
+          <div>
+            <h4>Choose which analysis to show and with which graph</h4>
+          </div>
 
           {/* Buttons for selecting which sections of the analysis to show */}
           <div className="selectButtons">
             <div className="innerButton"><button className={generalBtnClass} 
-              onClick={ () => this.selectButtonClick(generalSelect)}>General Actions</button></div>
+              onClick={ () => this.selectButtonClick(generalSelect, true)}>General Actions</button></div>
               
             <div className="innerButton"><button className={biomesBtnClass} 
-              onClick={ () => this.selectButtonClick(biomeSelect)}>Biome Statistics</button></div>
+              onClick={ () => this.selectButtonClick(biomeSelect, true)}>Biome Statistics</button></div>
 
             <div className="innerButton"><button className={fieldsBtnClass} 
-              onClick={ () => this.selectButtonClick(fieldSelect)}>Field Analysis</button></div>
-          </div>
-          <div>
-                <p>select options to generate more analysis</p>
+              onClick={ () => this.selectButtonClick(fieldSelect, true)}>Field Analysis</button></div>
           </div>
 
           {/* Buttons for selecting which types of graphs to show */}
           <div className="selectButtons">
             <div className="innerButton"><button className={barBtnClass} 
-              onClick={ () => this.selectButtonClick(barSelect)}>Bar Graph</button></div>
+              onClick={ () => this.selectButtonClick(barSelect, false)}>Bar Graph</button></div>
               
             <div className="innerButton"><button className={pieBtnClass} 
-              onClick={ () => this.selectButtonClick(pieSelect)}>Pie Chart</button></div>
+              onClick={ () => this.selectButtonClick(pieSelect, false)}>Pie Chart</button></div>
 
             <div className="innerButton"><button className={donutBtnClass} 
-              onClick={ () => this.selectButtonClick(donutSelect)}>Donut Chart</button></div>
+              onClick={ () => this.selectButtonClick(donutSelect, false)}>Donut Chart</button></div>
 
             <div className="innerButton"><button className={lineBtnClass} 
-              onClick={ () => this.selectButtonClick(lineSelect)}>Line Graph</button></div>
+              onClick={ () => this.selectButtonClick(lineSelect, false)}>Line Graph</button></div>
           </div>
 
           
