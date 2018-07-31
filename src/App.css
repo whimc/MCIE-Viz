@@ -172,3 +172,14 @@ hr {
 .disabledDiv {
   display: none;
 }
+
+.App-footer {
+  background-color: #222;
+  height: auto;
+  padding: 20px;
+  color: white;
+}
+
+.App-ending {
+  font-size: 1em;	
+}
