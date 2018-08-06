@@ -668,9 +668,11 @@ class App extends Component {
 
         </div>
         
-        <footer className="App-footer">
-          <p className="App-ending">&#169; Copyright 2018 WHIMC</p>
-        </footer>
+        <div className="bottom">
+          <footer className="App-footer">
+            <p className="App-ending">&#169; Copyright 2018 WHIMC</p>
+          </footer>
+        </div>
 
       </div>
     );

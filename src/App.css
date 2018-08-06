@@ -174,21 +174,23 @@ hr {
 }
 
 .App-footer {
-  /* background-color: #222;
-  color: white; */
-  color: rgb(44, 44, 44);
-  position: fixed;
+  background-color: #222;
+  color: white;
+  position: absolute;
   bottom: 0;
-  left: 10px;
-  /* height: 60px; */
-  /* padding: 20px; */
-  /* position: absolute; */
-  /* width: 100%; */
+  width: 100%;
   
-  /* background:#6cf; */
-  
+}
+
+.bottom {
+  padding: 40px 0 0 0;
 }
 
 .App-ending {
   font-size: 1em;	
+}
+
+html {
+  position: relative;
+  min-height: 100%;
 }
