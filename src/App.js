@@ -14,7 +14,7 @@ const GENERAL_LABELS = ["Blocks Traveled/10", "Blocks Placed", "Blocks Broken", 
 const LONG_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 const SHORT_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec']
 
-const generalSelect = "general_select", biomeSelect = "biome_select", fieldSelect = "field_select";
+const generalSelect = "general_select", biomeSelect = "biome_select", fieldSelect = "field_select", allSelect = "select_all";
 const barSelect = "bar_select", pieSelect = "pie_select", donutSelect = "donut_select", lineSelect = "line_select";
 
 /**
@@ -112,6 +112,9 @@ class App extends Component {
 
       // If each of these buttons is disabled
       buttonStates: {
+
+        select_all: false,
+
         analysis_type: {
           'general_select': false,
           'biome_select': true,
@@ -247,20 +250,59 @@ class App extends Component {
 
     var tempButtonStates = this.state.buttonStates;
     var buttonOff = tempButtonStates[path][buttonID];
+
+    if (this.state.buttonStates[allSelect]) {
+
+      tempButtonStates[allSelect] = false;
+      for (var buttonInd in tempButtonStates["analysis_type"]) {
+        tempButtonStates["analysis_type"][buttonInd] = true;
+      }
+      for (var buttonInd in tempButtonStates["graph_type"]) {
+        tempButtonStates["graph_type"][buttonInd] = true;
+      }
+
+      if (isAnalysisButton) {
+        tempButtonStates["analysis_type"][buttonID] = false;
+        tempButtonStates["graph_type"][barSelect] = false;
+      } else {
+          tempButtonStates["graph_type"][buttonID] = false;
+          if (buttonID === lineSelect) tempButtonStates["analysis_type"][fieldSelect] = false;
+          else tempButtonStates["analysis_type"][generalSelect] = false;
+      }
+
+      this.setState({buttonStates: tempButtonStates});
+      return;
+    }
     
-    if (!buttonOff) return;
+    // if (!buttonOff) return;
 
     // Make sure that the line graph is not selected for an analysis without one.
-    if (isAnalysisButton && !this.state.buttonStates['graph_type'][lineSelect]) {
+    if (isAnalysisButton && buttonID !== fieldSelect && !this.state.buttonStates['graph_type'][lineSelect]) {
       tempButtonStates['graph_type'][lineSelect] = true;
       tempButtonStates['graph_type'][barSelect] = false;
     }
 
     for (var buttonInd in tempButtonStates[path]) {
       tempButtonStates[path][buttonInd] = true;
-    }    
-    tempButtonStates[path][buttonID] = !buttonOff;
+    }
+
+    // tempButtonStates[path][buttonID] = !buttonOff;
+    tempButtonStates[path][buttonID] = false;
     
+    this.setState({buttonStates: tempButtonStates});
+  }
+
+  selectAllButtonClick() {
+    var tempButtonStates = this.state.buttonStates;
+    tempButtonStates[allSelect] = true;
+
+    for (var buttonInd in tempButtonStates["analysis_type"]) {
+      tempButtonStates["analysis_type"][buttonInd] = false;
+    }
+    for (var buttonInd in tempButtonStates["graph_type"]) {
+      tempButtonStates["graph_type"][buttonInd] = false;
+    }
+
     this.setState({buttonStates: tempButtonStates});
   }
 
@@ -610,6 +652,9 @@ class App extends Component {
 
             <div className="innerButton"><button className={fieldsBtnClass} 
               onClick={ () => this.selectButtonClick(fieldSelect, true)}>Field Analysis</button></div>
+
+            <div className="innerButton"><button className="myButton" disabled={this.state.buttonStates[allSelect]}
+              onClick={ () => this.selectAllButtonClick()}><b>Select All</b></button></div>
           </div>
 
           {/* Buttons for selecting which types of graphs to show */}
