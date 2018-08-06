@@ -94,16 +94,18 @@ class App extends Component {
       end_time: -1,
       // Whether or not the analysis has loaded
       loaded: false,
-      // JSON returned from analysis
-      analysis_JSON: [],
       // 0: Blocks traveled (/10) | 1: Blocks placed | 2: Blocks broken | 3: Chat messages sent | 4: Commands sent
       analysis_general: [],
       // Keys for STEM areas
       analysis_STEM_keys: [],
       // Values for STEM areas
       analysis_STEM_values: [],
-      // Whole "areaTimes" part of JSON file
+      // Whole "sessionStemAreaTimes" part of JSON file
       analysis_STEM_times: {},
+      // Section of "sessionStemAreaTimes" that is currently selected
+      analysis_STEM_selected_session: {},
+      // Info about the selected session
+      analysis_STEM_selected_info: {},
       // Keys for biomes
       analysis_biome_keys: [],
       // Values for biomes
@@ -143,6 +145,7 @@ class App extends Component {
     this.generateButtonClick = this.generateButtonClick.bind(this);
     this.handleChangeUser = this.handleChangeUser.bind(this);
     this.handleChangeSession = this.handleChangeSession.bind(this);
+    this.handleSelectTimedSession = this.handleSelectTimedSession.bind(this);
     this.reloadPage = this.reloadPage.bind(this);
   }
 
@@ -249,7 +252,6 @@ class App extends Component {
     if (!isAnalysisButton) path = "graph_type";
 
     var tempButtonStates = this.state.buttonStates;
-    var buttonOff = tempButtonStates[path][buttonID];
 
     if (this.state.buttonStates[allSelect]) {
 
@@ -257,7 +259,7 @@ class App extends Component {
       for (var buttonInd in tempButtonStates["analysis_type"]) {
         tempButtonStates["analysis_type"][buttonInd] = true;
       }
-      for (var buttonInd in tempButtonStates["graph_type"]) {
+      for (buttonInd in tempButtonStates["graph_type"]) {
         tempButtonStates["graph_type"][buttonInd] = true;
       }
 
@@ -282,7 +284,7 @@ class App extends Component {
       tempButtonStates['graph_type'][barSelect] = false;
     }
 
-    for (var buttonInd in tempButtonStates[path]) {
+    for (buttonInd in tempButtonStates[path]) {
       tempButtonStates[path][buttonInd] = true;
     }
 
@@ -299,7 +301,7 @@ class App extends Component {
     for (var buttonInd in tempButtonStates["analysis_type"]) {
       tempButtonStates["analysis_type"][buttonInd] = false;
     }
-    for (var buttonInd in tempButtonStates["graph_type"]) {
+    for (buttonInd in tempButtonStates["graph_type"]) {
       tempButtonStates["graph_type"][buttonInd] = false;
     }
 
@@ -371,6 +373,20 @@ class App extends Component {
     console.log("Selected user: " + value.label)
   }
 
+  handleSelectTimedSession(value) {
+    var sessionID = value.value;
+    console.log("session ID: " + value.value)
+    console.log("Label: " + value.label)
+    console.log(this.state.analysis_STEM_times[sessionID])
+    this.setState({
+      analysis_STEM_selected_session: this.state.analysis_STEM_times[sessionID],
+      analysis_STEM_selected_info: {
+        value: sessionID,
+        label: value.label,
+      }
+    });
+  }
+
   /**
    * Generates and populates the dropdown menu with a list of sessions for the given user
    */
@@ -438,35 +454,41 @@ class App extends Component {
     }
 
     // var url = "https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/getanalysis/";
-    var url = "https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/getanalysisbysession/";
+    // var url = "https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/getanalysisbysession/";
+    var url = "https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/newgetanalysisbysession/";
     url += this.state.SELECT.users_selected.value + "+" + this.state.SELECT.sessions_selected.map(a => a.value).join("+");
+    console.log(url);
     // console.log(url);
     // url = "https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/getanalysis/275+1530374999+1530377076";
 
     this.disableGenerateButton();
     this.loadingAnimation();
-      fetch(url).then(response => response.json()).then(data => {
-        this.setState({
-          username: data["username"],
-          start_time: data["startTime"],
-          end_time: data["endTime"],
-          loaded: true,
-          analysis_JSON: [JSON.stringify(data)],
-          analysis_general: [
-            data["blocksTraveled"]/10,
-            data["blocksPlaced"],
-            data["blocksBroken"],
-            data["chatMessages"],
-            data["commands"]
-          ],
-          analysis_STEM_keys: Object.keys(data["stemAreas"]),
-          analysis_STEM_values: Object.values(data["stemAreas"]),
-          analysis_STEM_times: data["areaTimes"],
-          analysis_biome_keys: Object.keys(data["biomeTimes"]),
-          analysis_biome_values: Object.values(data["biomeTimes"]),
-        });
-      }
-    ).then(() => {
+    fetch(url).then(response => response.json()).then(data => {
+      this.setState({
+        username: data["username"],
+        start_time: data["startTime"],
+        end_time: data["endTime"],
+        loaded: true,
+        analysis_general: [
+          // data["blocksTraveled"]/10,
+          data["distanceTraveled"]/10,
+          data["blocksPlaced"],
+          data["blocksBroken"],
+          data["chatMessages"],
+          data["commands"]
+        ],
+        // analysis_STEM_keys: Object.keys(data["stemAreas"]),
+        // analysis_STEM_values: Object.values(data["stemAreas"]),
+        analysis_STEM_keys: Object.keys(data["stemAreaPoints"]),
+        analysis_STEM_values: Object.values(data["stemAreaPoints"]),
+
+        // analysis_STEM_times: data["areaTimes"],
+        analysis_STEM_times: data["sessionStemAreaTimes"],
+
+        analysis_biome_keys: Object.keys(data["biomeTimes"]),
+        analysis_biome_values: Object.values(data["biomeTimes"]),
+      });
+    }).then(() => {
       this.hideOptionsMenu();
       this.normalAnimation();
       this.showAnalysis();
@@ -478,7 +500,6 @@ class App extends Component {
 //   start_time: TEST_JSON["startTime"],
 //   end_time: TEST_JSON["endTime"],
 //   loaded: true,
-//   analysis_JSON: [JSON.stringify(TEST_JSON)],
 //   analysis_general: [
 //     TEST_JSON["blocksTraveled"]/10,
 //     TEST_JSON["blocksPlaced"],
@@ -706,8 +727,35 @@ class App extends Component {
               <Chart type='Bar' className={barClass} labels={this.state.analysis_STEM_keys} data={this.state.analysis_STEM_values} yAxisLabel='Points'/>
               <Chart type='Pie' className={pieClass} labels={this.state.analysis_STEM_keys} data={this.state.analysis_STEM_values} />
               <Chart type='Doughnut' className={donutClass} labels={this.state.analysis_STEM_keys} data={this.state.analysis_STEM_values} />
+              
               <h4 className={lineClass}>Click on a point to see what blocks were placed/broken</h4>
-              <TimeChart className={lineClass} data={this.state.analysis_STEM_times} />
+              <h4 className={lineClass}>Select which session to see the graph of</h4>
+
+{/* <Select className="custom-select"
+              multi={true}
+              placeholder="Select one or more sessions"
+              options={ this.state.SELECT.sessions_data }
+              value={ this.state.SELECT.sessions_selected }
+              removeSelected={true}
+              closeOnSelect={false}
+              onChange={ this.handleChangeSession }
+              isLoading={ this.state.SELECT.sessions_loading }
+              disabled={ this.state.SELECT.sessions_disabled }
+            /> */}
+
+              <Select
+                className={classNames({
+                  "custom-select": true,
+                  "disabledDiv": this.state.buttonStates.graph_type[lineSelect]
+                })}
+                placeholder={"Analyzed Sessions (" + this.state.SELECT.sessions_selected.length + ")"}
+                options={ this.state.SELECT.sessions_selected }
+                value={ this.state.analysis_STEM_selected_info }
+                closeOnSelect={true}
+                clearable={false}
+                onChange={ this.handleSelectTimedSession }
+              />
+              <TimeChart className={lineClass} data={this.state.analysis_STEM_selected_session} />
             </div>
           </div>
 
