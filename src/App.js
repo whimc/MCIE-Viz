@@ -524,6 +524,7 @@ class App extends Component {
     
     return (
       <div className="App">
+        
         <header className="App-header">
           <img src={logo} className="App-logo" id="logo" alt="logo" />
           <h1 className="App-title">Minecraft Interest Engine</h1>
@@ -666,9 +667,11 @@ class App extends Component {
           </div>
 
         </div>
+        
         <footer className="App-footer">
           <p className="App-ending">&#169; Copyright 2018 WHIMC</p>
         </footer>
+
       </div>
     );
   }

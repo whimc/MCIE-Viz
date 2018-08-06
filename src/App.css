@@ -174,10 +174,19 @@ hr {
 }
 
 .App-footer {
-  background-color: #222;
-  height: auto;
-  padding: 20px;
-  color: white;
+  /* background-color: #222;
+  color: white; */
+  color: rgb(44, 44, 44);
+  position: fixed;
+  bottom: 0;
+  left: 10px;
+  /* height: 60px; */
+  /* padding: 20px; */
+  /* position: absolute; */
+  /* width: 100%; */
+  
+  /* background:#6cf; */
+  
 }
 
 .App-ending {
