@@ -88,7 +88,7 @@ function pointClick(elements) {
 
     // TODO: Make this display in a better way.    
     
-    var header = datasetNames[setIndex] + " (" + minutes + "," + points + ")";
+    var header = datasetNames[setIndex] + " (" + minutes + ", " + points + ")";
     var breakString = "Blocks broken:\n" + (Object.keys(breakActions).length === 0 ? "None\n" : "");
     var placeString = "Blocks placed:\n" + (Object.keys(placeActions).length === 0 ? "None\n" : "");
 
