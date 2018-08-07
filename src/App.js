@@ -467,7 +467,7 @@ class App extends Component {
         loaded: true,
         analysis_general: [
           // data["blocksTraveled"]/10,
-          data["distanceTraveled"]/10,
+          (data["distanceTraveled"]/10).toFixed(2),
           data["blocksPlaced"],
           data["blocksBroken"],
           data["chatMessages"],
