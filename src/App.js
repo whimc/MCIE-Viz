@@ -225,22 +225,22 @@ class App extends Component {
     this.toggleButtonState(buttonID, isAnalysisButton);
 
     // Handle the lines separating the different analyses
-    var line1 = document.getElementById("line1");
-    var line2 = document.getElementById("line2");
+    // var line1 = document.getElementById("line1");
+    // var line2 = document.getElementById("line2");
 
-    var generalOn = !this.state.buttonStates.analysis_type[generalSelect];
-    var biomeOn = !this.state.buttonStates.analysis_type[biomeSelect];
-    var fieldOn = !this.state.buttonStates.analysis_type[fieldSelect];
+    // var generalOn = !this.state.buttonStates.analysis_type[generalSelect];
+    // var biomeOn = !this.state.buttonStates.analysis_type[biomeSelect];
+    // var fieldOn = !this.state.buttonStates.analysis_type[fieldSelect];
 
-    line1.style.display = "none";
-    line2.style.display = "none";
+    // line1.style.display = "none";
+    // line2.style.display = "none";
 
-    if (generalOn) {
-      if (biomeOn || fieldOn) line1.style.display = "block";
-      if (biomeOn && fieldOn) line2.style.display = "block";
-    } else {
-      if (biomeOn && fieldOn) line2.style.display = "block";
-    }
+    // if (generalOn) {
+    //   if (biomeOn || fieldOn) line1.style.display = "block";
+    //   if (biomeOn && fieldOn) line2.style.display = "block";
+    // } else {
+    //   if (biomeOn && fieldOn) line2.style.display = "block";
+    // }
   }
 
   /**
@@ -375,9 +375,6 @@ class App extends Component {
 
   handleSelectTimedSession(value) {
     var sessionID = value.value;
-    console.log("session ID: " + value.value)
-    console.log("Label: " + value.label)
-    console.log(this.state.analysis_STEM_times[sessionID])
     this.setState({
       analysis_STEM_selected_session: this.state.analysis_STEM_times[sessionID],
       analysis_STEM_selected_info: {
@@ -457,7 +454,6 @@ class App extends Component {
     // var url = "https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/getanalysisbysession/";
     var url = "https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/newgetanalysisbysession/";
     url += this.state.SELECT.users_selected.value + "+" + this.state.SELECT.sessions_selected.map(a => a.value).join("+");
-    console.log(url);
     // console.log(url);
     // url = "https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/getanalysis/275+1530374999+1530377076";
 
@@ -484,6 +480,8 @@ class App extends Component {
 
         // analysis_STEM_times: data["areaTimes"],
         analysis_STEM_times: data["sessionStemAreaTimes"],
+        analysis_STEM_selected_info: this.state.SELECT.sessions_selected[0],
+        analysis_STEM_selected_session: data["sessionStemAreaTimes"][this.state.SELECT.sessions_selected[0].value],
 
         analysis_biome_keys: Object.keys(data["biomeTimes"]),
         analysis_biome_values: Object.values(data["biomeTimes"]),
@@ -531,6 +529,9 @@ class App extends Component {
     var generateOptionsClass = classNames({
       "disabledDiv": this.state.options_state,
     })
+    var separatorClass = classNames({
+      "disabledDiv": !this.state.buttonStates[allSelect],
+    });
 
     var generalBtnClass = classNames({
       "myButton": true,
@@ -705,7 +706,7 @@ class App extends Component {
           </div>
 
           {/* By default, this separator is disabled */}
-          <hr id="line1" style={{display: "none"}}/>
+          <hr className={separatorClass}/>
 
           {/* Statistics of biome times */}
           <div className={biomesClass}>
@@ -718,7 +719,7 @@ class App extends Component {
           </div>
 
           {/* By default, this separator is disabled */}
-          <hr id="line2" style={{display: "none"}}/>
+          <hr className={separatorClass}/>
 
           {/* Analysis of STEM fields */}
           <div className={fieldsClass}>
