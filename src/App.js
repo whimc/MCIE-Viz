@@ -81,10 +81,14 @@ class App extends Component {
         sessions_disabled: true,
         sessions_data: [],
         sessions_selected: [],
+
+        recentSessions_loading: true,
+        recentSessions_disabled: true,
+        recentSessions_data: [],
+        recentSessions_selected: '',
       },
       // Whether or not the options part is disabled
       options_state: false,
-
 
       // Username of user being analyzed
       username: "",
@@ -129,15 +133,6 @@ class App extends Component {
           'donut_select': true,
           'line_select': true,
         },
-
-        // 'general_select': false,
-        // 'biome_select': true,
-        // 'field_select': true,
-        
-        // 'bar_select': false,
-        // 'pie_select': true,
-        // 'donut_select': true,
-        // 'line_select': true,
       },
     };
 
@@ -145,6 +140,8 @@ class App extends Component {
     this.generateButtonClick = this.generateButtonClick.bind(this);
     this.handleChangeUser = this.handleChangeUser.bind(this);
     this.handleChangeSession = this.handleChangeSession.bind(this);
+    this.handleChangeRecentSession = this.handleChangeRecentSession.bind(this);
+
     this.handleSelectTimedSession = this.handleSelectTimedSession.bind(this);
     this.reloadPage = this.reloadPage.bind(this);
   }
@@ -154,6 +151,7 @@ class App extends Component {
    */
   componentDidMount() {
     this.generateUserList();
+    this.generateRecentSessions();
     this.hideAnalysis();
   }
 
@@ -275,8 +273,6 @@ class App extends Component {
       this.setState({buttonStates: tempButtonStates});
       return;
     }
-    
-    // if (!buttonOff) return;
 
     // Make sure that the line graph is not selected for an analysis without one.
     if (isAnalysisButton && buttonID !== fieldSelect && !this.state.buttonStates['graph_type'][lineSelect]) {
@@ -373,17 +369,6 @@ class App extends Component {
     console.log("Selected user: " + value.label)
   }
 
-  handleSelectTimedSession(value) {
-    var sessionID = value.value;
-    this.setState({
-      analysis_STEM_selected_session: this.state.analysis_STEM_times[sessionID],
-      analysis_STEM_selected_info: {
-        value: sessionID,
-        label: value.label,
-      }
-    });
-  }
-
   /**
    * Generates and populates the dropdown menu with a list of sessions for the given user
    */
@@ -440,26 +425,110 @@ class App extends Component {
     console.log("Selected sessions: " + values.map(a => a.label).join(", "));
   }
 
+  
+  /**
+   * Generates a list of 20 most recent sessions for the dropdown menu
+   */
+  generateRecentSessions() {
+    var url = "https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/getrecentsessions/20";
+    
+    fetch(url).then(response => response.json()).then(data => {
+
+      var sessions = []
+      data.forEach(obj => {
+        var duration = getDuration(obj.loginTime, obj.logoutTime);
+        sessions.push({
+          value: obj.userId + "+" + obj.sessionId,
+          label: obj.username + " " + getDate(obj.loginTime, true) + " (" + duration + " mins)",
+          user: {
+            value: obj.userId,
+            label: obj.username,
+          },
+          session: {
+            value: obj.sessionId,
+            label: getDate(obj.loginTime, true) + " (" + duration + " mins)",
+            startTime: obj.loginTime,
+            endTime: obj.logoutTime,
+          },
+        })
+      });
+
+      var select_options = this.state.SELECT;
+      select_options.recentSessions_data = sessions;
+      this.setState({ SELECT: select_options });
+
+    }).then(() => {
+      var select_options = this.state.SELECT;
+      select_options.recentSessions_loading = false;
+      select_options.recentSessions_disabled = false;
+      this.setState({ SELECT: select_options })
+    });
+  }
+
+  /**
+   * Handles selecting a recent session
+   * @param {*} value Value of the selected item
+   */
+  handleChangeRecentSession(value) {
+
+    if (this.state.SELECT.recentSessions_selected === value) return;
+
+    var select_options = this.state.SELECT;
+    if (value === null) value = '';
+
+    select_options.recentSessions_selected = value;
+
+    this.setState({ SELECT: select_options });
+
+    console.log("Selected recent session: " + value.label);
+    console.log("  " + value.value)
+  }
+
+  /**
+   * Handles selecting which session to show the timed analysis of
+   * @param {*} value Value of the selected item
+   */
+  handleSelectTimedSession(value) {
+    var sessionID = value.value;
+    this.setState({
+      analysis_STEM_selected_session: this.state.analysis_STEM_times[sessionID],
+      analysis_STEM_selected_info: {
+        value: sessionID,
+        label: value.label,
+      }
+    });
+  }
+
   /**
    * Retrieves analysis as a JSON file and displays it
    */
   generateButtonClick() {
 
-    if (this.state.SELECT.users_selected === '' || this.state.SELECT.sessions_selected.length === 0) {
+    if ((this.state.SELECT.users_selected === '' || this.state.SELECT.sessions_selected.length === 0) && this.state.SELECT.recentSessions_selected === '') {
       alert("Please select a user id and session(s)!")
       return;
     }
 
-    // var url = "https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/getanalysis/";
-    // var url = "https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/getanalysisbysession/";
     var url = "https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/newgetanalysisbysession/";
-    url += this.state.SELECT.users_selected.value + "+" + this.state.SELECT.sessions_selected.map(a => a.value).join("+");
-    // console.log(url);
-    // url = "https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/getanalysis/275+1530374999+1530377076";
+    if (this.state.SELECT.recentSessions_selected !== '') {
+      url += this.state.SELECT.recentSessions_selected.value;
+    } else {
+      url += this.state.SELECT.users_selected.value + "+" + this.state.SELECT.sessions_selected.map(a => a.value).join("+");
+    }
 
     this.disableGenerateButton();
     this.loadingAnimation();
     fetch(url).then(response => response.json()).then(data => {
+      if (this.state.SELECT.recentSessions_selected !== '') {
+        
+        var recentSession = this.state.SELECT.recentSessions_selected;
+        var select_options = this.state.SELECT;
+
+        select_options.users_selected = recentSession.user;
+        select_options.sessions_selected = [recentSession.session];
+        this.setState({ SELECT: select_options });
+  
+      }
       this.setState({
         username: data["username"],
         start_time: data["startTime"],
@@ -622,6 +691,21 @@ class App extends Component {
               isLoading={ this.state.SELECT.sessions_loading }
               disabled={ this.state.SELECT.sessions_disabled }
             />
+
+            <hr/>
+
+            {/* Dropdown for selecting from recent sessions */}
+            <Select className="custom-select"
+              placeholder="Select from the 20 most recent sessions"
+              options={ this.state.SELECT.recentSessions_data }
+              value={ this.state.SELECT.recentSessions_selected }
+              removeSelected={false}
+              closeOnSelect={true}
+              onChange={ this.handleChangeRecentSession }
+              isLoading={ this.state.SELECT.recentSessions_loading }
+              disabled={ this.state.SELECT.recentSessions_disabled }
+            />
+
           </div>
 
           {/* Button to generate analysis */}
@@ -646,7 +730,7 @@ class App extends Component {
             <p><b>Start Time:</b> {getDate(this.state.start_time)}</p>
             <p><b>End Time:</b> {this.state.end_time < 0 ? "Now" : getDate(this.state.end_time)}</p>
             <p><b>Total Duration:</b> {getDurationOfSessions(this.state.SELECT.sessions_selected, true)} minutes</p>
-            <p><b>Distance Traveled:</b> {this.state.analysis_general[0]*10}</p>
+            <p><b>Distance Traveled:</b> {(this.state.analysis_general[0]*10).toFixed(2)}</p>
             <p><b>Blocks Placed:</b> {this.state.analysis_general[1]}</p>
             <p><b>Blocks Broken:</b> {this.state.analysis_general[2]}</p>
             <p><b>Messages Sent:</b> {this.state.analysis_general[3]}</p>
