@@ -2,7 +2,7 @@
   "name": "mcie-viz",
   "private": true,
   "version": "0.1.0",
-  "homepage": "http://jackah2.github.io/mcie-viz",
+  "homepage": "https://whimc.github.io/MCIE-Viz/",
   "dependencies": {
     "chart.js": "^2.7.2",
     "classnames": "^2.2.6",
