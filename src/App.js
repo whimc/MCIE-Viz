@@ -65,10 +65,10 @@ function getDurationOfSessions(sessions, decimal=false) {
 }
 
 class App extends Component {
-  
+
   constructor(props) {
     super(props);
-    
+
     this.state = {
 
       SELECT: {
@@ -206,7 +206,7 @@ class App extends Component {
    */
   loadingAnimation() {
     var logo = document.getElementById("logo");
-    var property = "App-logo-spin-loading infinite 1s alternate ease-in-out"; 
+    var property = "App-logo-spin-loading infinite 1s alternate ease-in-out";
     logo.style['-webkit-animation'] = property;
     logo.style['-moz-animation'] = property;
     logo.style['-o-animation'] = property;
@@ -286,7 +286,7 @@ class App extends Component {
 
     // tempButtonStates[path][buttonID] = !buttonOff;
     tempButtonStates[path][buttonID] = false;
-    
+
     this.setState({buttonStates: tempButtonStates});
   }
 
@@ -309,8 +309,8 @@ class App extends Component {
    */
   generateUserList() {
 
-    var url = "https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/getallusers/";
-    
+    var url = process.env.REACT_APP_GET_ALL_USERS_URL;
+
     fetch(url).then(response => response.json()).then(data => {
 
       data.sort(function(a, b) {
@@ -342,7 +342,7 @@ class App extends Component {
       select_options.users_disabled = false;
       this.setState({ SELECT: select_options })
     });
-    
+
   }
 
   /**
@@ -360,7 +360,7 @@ class App extends Component {
     select_options.sessions_data = [];
     select_options.sessions_disabled = true;
 
-    this.setState({ 
+    this.setState({
         SELECT: select_options,
         current_user_id: (value === '' ? -1 : value.value) }, () => {
       this.generateUserSessions();
@@ -380,9 +380,9 @@ class App extends Component {
     select_options.sessions_disabled = true;
     this.setState({ SELECT: select_options });
 
-    var url = "https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/getsessions/" + this.state.SELECT.users_selected.value;
+    var url = `${process.env.REACT_APP_GET_SESSIONS_URL}/${this.state.SELECT.users_selected.value}`;
     fetch(url).then(response => response.json()).then(data => {
-      
+
       data.sort(function(a, b) {
         return b.loginTime - a.loginTime;
       })
@@ -425,13 +425,13 @@ class App extends Component {
     console.log("Selected sessions: " + values.map(a => a.label).join(", "));
   }
 
-  
+
   /**
    * Generates a list of 20 most recent sessions for the dropdown menu
    */
   generateRecentSessions() {
-    var url = "https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/getrecentsessions/20";
-    
+    var url = `${process.env.REACT_APP_GET_RECENT_SESSIONS_URL}/20`;
+
     fetch(url).then(response => response.json()).then(data => {
 
       var sessions = []
@@ -509,7 +509,7 @@ class App extends Component {
       return;
     }
 
-    var url = "https://rpaowv6m75.execute-api.us-east-2.amazonaws.com/beta/newgetanalysisbysession/";
+    var url = `${process.env.REACT_APP_GET_ANALYSIS_BY_SESSION}/`;
     if (this.state.SELECT.recentSessions_selected !== '') {
       url += this.state.SELECT.recentSessions_selected.value;
     } else {
@@ -520,14 +520,14 @@ class App extends Component {
     this.loadingAnimation();
     fetch(url).then(response => response.json()).then(data => {
       if (this.state.SELECT.recentSessions_selected !== '') {
-        
+
         var recentSession = this.state.SELECT.recentSessions_selected;
         var select_options = this.state.SELECT;
 
         select_options.users_selected = recentSession.user;
         select_options.sessions_selected = [recentSession.session];
         this.setState({ SELECT: select_options });
-  
+
       }
       this.setState({
         username: data["username"],
@@ -585,7 +585,7 @@ class App extends Component {
 // this.showAnalysis();
 
   }
-  
+
   /**
    * Reloads the page
    * We use this to reset everything and go back to the main selecting screen
@@ -654,10 +654,10 @@ class App extends Component {
     var lineClass = classNames({
       "disabledDiv": this.state.buttonStates.graph_type[lineSelect]
     });
-    
+
     return (
       <div className="App">
-        
+
         <header className="App-header">
           <img src={logo} className="App-logo" id="logo" alt="logo" />
           <h1 className="App-title">Minecraft Interest Engine</h1>
@@ -666,7 +666,7 @@ class App extends Component {
         {/* First screen -- selecting which user and which session to analyze */}
         <div className={generateOptionsClass}>
           <div className="selectors">
-          
+
             {/* Dropdown for selecting a user */}
             <Select className="custom-select"
               placeholder="Select a user"
@@ -750,13 +750,13 @@ class App extends Component {
 
           {/* Buttons for selecting which sections of the analysis to show */}
           <div className="selectButtons">
-            <div className="innerButton"><button className={generalBtnClass} 
+            <div className="innerButton"><button className={generalBtnClass}
               onClick={ () => this.selectButtonClick(generalSelect, true)}>General Actions</button></div>
-              
-            <div className="innerButton"><button className={biomesBtnClass} 
+
+            <div className="innerButton"><button className={biomesBtnClass}
               onClick={ () => this.selectButtonClick(biomeSelect, true)}>Biome Statistics</button></div>
 
-            <div className="innerButton"><button className={fieldsBtnClass} 
+            <div className="innerButton"><button className={fieldsBtnClass}
               onClick={ () => this.selectButtonClick(fieldSelect, true)}>Field Analysis</button></div>
 
             <div className="innerButton"><button className="myButton" disabled={this.state.buttonStates[allSelect]}
@@ -765,20 +765,20 @@ class App extends Component {
 
           {/* Buttons for selecting which types of graphs to show */}
           <div className="selectButtons">
-            <div className="innerButton"><button className={barBtnClass} 
+            <div className="innerButton"><button className={barBtnClass}
               onClick={ () => this.selectButtonClick(barSelect, false)}>Bar Graph</button></div>
-              
-            <div className="innerButton"><button className={pieBtnClass} 
+
+            <div className="innerButton"><button className={pieBtnClass}
               onClick={ () => this.selectButtonClick(pieSelect, false)}>Pie Chart</button></div>
 
-            <div className="innerButton"><button className={donutBtnClass} 
+            <div className="innerButton"><button className={donutBtnClass}
               onClick={ () => this.selectButtonClick(donutSelect, false)}>Donut Chart</button></div>
 
             <div className="innerButton"><button className={lineBtnClass} disabled={this.state.buttonStates.analysis_type[fieldSelect]}
               onClick={ () => this.selectButtonClick(lineSelect, false)}>Line Graph</button></div>
           </div>
 
-          
+
           {/* Analysis of general actions */}
           <div className={generalClass}>
             <h3>General Action Statistics</h3>
@@ -812,7 +812,7 @@ class App extends Component {
               <Chart type='Bar' className={barClass} labels={this.state.analysis_STEM_keys} data={this.state.analysis_STEM_values} yAxisLabel='Points'/>
               <Chart type='Pie' className={pieClass} labels={this.state.analysis_STEM_keys} data={this.state.analysis_STEM_values} />
               <Chart type='Doughnut' className={donutClass} labels={this.state.analysis_STEM_keys} data={this.state.analysis_STEM_values} />
-              
+
               <h4 className={lineClass}>Click on a point to see what blocks were placed/broken</h4>
               <h4 className={lineClass}>Select which session to see the graph of</h4>
 
@@ -845,10 +845,10 @@ class App extends Component {
           </div>
 
         </div>
-        
+
         <div className="bottom">
           <footer className="App-footer">
-            <p className="App-ending">&#169; Copyright 2018 WHIMC</p>
+            <p className="App-ending">&#169; Copyright 2021 WHIMC</p>
           </footer>
         </div>
 
