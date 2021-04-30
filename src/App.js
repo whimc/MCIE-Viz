@@ -5,7 +5,6 @@ import Chart from './Components/Chart'
 import TimeChart from './Components/TimeChart'
 import classNames from 'classnames';
 import Select from 'react-select';
-import 'react-select/dist/react-select.css';
 
 // const TEST_JSON = require('./TestJSON/latest_analysis.json');
 
@@ -676,7 +675,7 @@ class App extends Component {
               closeOnSelect={true}
               onChange={ this.handleChangeUser }
               isLoading={ this.state.SELECT.users_loading }
-              disabled={ this.state.SELECT.users_disabled }
+              isDisabled={ this.state.SELECT.users_disabled }
             />
 
             {/* Dropdown for selecting one or more sessions */}
@@ -689,7 +688,7 @@ class App extends Component {
               closeOnSelect={false}
               onChange={ this.handleChangeSession }
               isLoading={ this.state.SELECT.sessions_loading }
-              disabled={ this.state.SELECT.sessions_disabled }
+              isDisabled={ this.state.SELECT.sessions_disabled }
             />
 
             <hr/>
@@ -703,7 +702,7 @@ class App extends Component {
               closeOnSelect={true}
               onChange={ this.handleChangeRecentSession }
               isLoading={ this.state.SELECT.recentSessions_loading }
-              disabled={ this.state.SELECT.recentSessions_disabled }
+              isDisabled={ this.state.SELECT.recentSessions_disabled }
             />
 
           </div>
