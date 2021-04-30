@@ -1,7 +1,21 @@
 {
-  "main.css": "static/css/main.53d6d4c9.css",
-  "main.css.map": "static/css/main.53d6d4c9.css.map",
-  "main.js": "static/js/main.22398ee6.js",
-  "main.js.map": "static/js/main.22398ee6.js.map",
-  "static\\media\\MCIE.png": "static/media/MCIE.6d751eec.png"
+  "files": {
+    "main.css": "/MCIE-Viz/static/css/main.386f59c4.chunk.css",
+    "main.js": "/MCIE-Viz/static/js/main.5135f318.chunk.js",
+    "main.js.map": "/MCIE-Viz/static/js/main.5135f318.chunk.js.map",
+    "runtime-main.js": "/MCIE-Viz/static/js/runtime-main.ae8d490e.js",
+    "runtime-main.js.map": "/MCIE-Viz/static/js/runtime-main.ae8d490e.js.map",
+    "static/js/2.fd48e278.chunk.js": "/MCIE-Viz/static/js/2.fd48e278.chunk.js",
+    "static/js/2.fd48e278.chunk.js.map": "/MCIE-Viz/static/js/2.fd48e278.chunk.js.map",
+    "index.html": "/MCIE-Viz/index.html",
+    "static/css/main.386f59c4.chunk.css.map": "/MCIE-Viz/static/css/main.386f59c4.chunk.css.map",
+    "static/js/2.fd48e278.chunk.js.LICENSE.txt": "/MCIE-Viz/static/js/2.fd48e278.chunk.js.LICENSE.txt",
+    "static/media/MCIE.8580aa56.png": "/MCIE-Viz/static/media/MCIE.8580aa56.png"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.ae8d490e.js",
+    "static/js/2.fd48e278.chunk.js",
+    "static/css/main.386f59c4.chunk.css",
+    "static/js/main.5135f318.chunk.js"
+  ]
 }
